@@ -1,0 +1,40 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.geosv</groupId>
+        <artifactId>geosv-things</artifactId>
+        <version>3.8.5</version>
+    </parent>
+
+    <packaging>pom</packaging>
+
+    <artifactId>things-modules</artifactId>
+
+    <modules>
+        <module>things-modules-link</module>
+        <module>things-modules-network</module>
+        <module>things-modules-influxdb</module>
+    </modules>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.geosv</groupId>
+            <artifactId>things-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.geosv</groupId>
+            <artifactId>things-framework</artifactId>
+        </dependency>
+
+        <!-- Spring封装的InfluxDB -->
+        <dependency>
+            <groupId>plus.ojbk</groupId>
+            <artifactId>influxdb-spring-boot-starter</artifactId>
+        </dependency>
+
+    </dependencies>
+
+
+
+</project>
