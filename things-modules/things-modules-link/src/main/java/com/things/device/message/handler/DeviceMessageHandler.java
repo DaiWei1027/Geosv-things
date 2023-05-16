@@ -18,12 +18,14 @@ import com.things.protocol.domain.Protocol;
 import com.things.protocol.utils.ProtocolManage;
 import com.things.utils.ByteUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -81,7 +83,7 @@ public class DeviceMessageHandler {
             deviceExecutor.execute(() -> {
 
                 //动态协议解析数据
-                JSONObject deviceJson;
+                List<JSONObject> deviceJson;
                 try {
 
                     deviceJson = protocolManage.load(protocol.getId(), data);
@@ -95,23 +97,27 @@ public class DeviceMessageHandler {
 
                 //判断设备是直连设备还是网关设备
                 String deviceType = device.getDeviceType();
-                DeviceData deviceData = null;
+                List<DeviceData> deviceDataList = Lists.newArrayList();
 
                 switch (deviceType) {
 
                     case DeviceConstants.DEVICE:
-                        deviceData = device(device, deviceJson);
+                        deviceDataList = device(device, deviceJson);
                         break;
                     case DeviceConstants.GATEWAY:
-                        deviceData = gateway(device, deviceJson);
+                        deviceDataList = gateway(device, deviceJson);
                         break;
                     default:
                         break;
                 }
 
-                if (null != deviceData) {
+                if (!CollectionUtils.isEmpty(deviceDataList)) {
 
-                    mqttGateway.sendToMqtt(TopicConstants.DEVICE_RULE_TOPIC, JSONObject.toJSONString(deviceData));
+                    deviceDataList.forEach(deviceData -> {
+
+                        mqttGateway.sendToMqtt(TopicConstants.DEVICE_RULE_TOPIC, JSONObject.toJSONString(deviceData));
+
+                    });
 
                 }
 
@@ -126,45 +132,74 @@ public class DeviceMessageHandler {
 
     }
 
-    private DeviceData device(Device device, JSONObject data) {
+    /**
+     * 普通设备数据处理
+     *
+     * @param device 设备信息
+     * @param data   数据
+     * @return 设备数据
+     */
+    private List<DeviceData> device(Device device, List<JSONObject> data) {
 
-        DeviceData deviceData = new DeviceData();
-        deviceData.setData(data.toString());
-        deviceData.setDeviceId(device.getDeviceId());
-        deviceData.setProductId(device.getProductId().toString());
-        deviceData.setDeviceName(device.getDeviceName());
+        List<DeviceData> deviceDataList = Lists.newArrayList();
 
-        //插入influxDB
-        influxDbService.insertDeviceData(deviceData);
+        data.forEach(item ->{
 
-        return deviceData;
+            DeviceData deviceData = new DeviceData();
+            deviceData.setData(item.toString());
+            deviceData.setDeviceId(device.getDeviceId());
+            deviceData.setProductId(device.getProductId().toString());
+            deviceData.setDeviceName(device.getDeviceName());
+            deviceDataList.add(deviceData);
+            //插入influxDB
+            influxDbService.insertDeviceData(deviceData);
+
+        });
+
+        return deviceDataList;
     }
 
-    private DeviceData gateway(Device device, JSONObject data) {
+    /**
+     * 网关设备数据处理
+     *
+     * @param device 设备信息
+     * @param data   数据
+     * @return 设备数据
+     */
+    private List<DeviceData> gateway(Device device, List<JSONObject> data) {
 
-        DeviceData deviceData = new DeviceData();
+        List<DeviceData> deviceDataList = Lists.newArrayList();
 
-        //边设备唯一标识
-        String deviceNo = data.get(DeviceConstants.DEVICE_NO).toString();
+        data.forEach( item -> {
 
-        if (StringUtils.isNotEmpty(deviceNo)) {
-            //边设备唯一标识和网关id查询边设备信息
-            SubDevice subDevice = subDeviceService.getSubDevice(deviceNo, device.getId());
-            if (!Objects.isNull(subDevice) && DeviceConstants.ENABLE.equals(subDevice.getStatus())) {
+            DeviceData deviceData = new DeviceData();
 
-                deviceData.setDeviceId(subDevice.getDeviceId());
-                deviceData.setDeviceName(subDevice.getDeviceName());
-                deviceData.setProductId(String.valueOf(subDevice.getProductId()));
-                deviceData.setData(data.toString());
-                //插入influxDB
-                influxDbService.insertDeviceData(deviceData);
+            //边设备唯一标识，协议必须解析出边设备标识，与边设备管理中的标识对应，如Modbus的地址
+            String deviceNo = item.get(DeviceConstants.DEVICE_NO).toString();
 
-            } else {
-                log.info("设备消息处理器：未查询到边设备信息，边设备标识[{}]，网关id[{}],或设备已停用", deviceNo, device.getId());
+            if (StringUtils.isNotEmpty(deviceNo)) {
+                //边设备唯一标识和网关id查询边设备信息
+                SubDevice subDevice = subDeviceService.getSubDevice(deviceNo, device.getId());
+                if (!Objects.isNull(subDevice) && DeviceConstants.ENABLE.equals(subDevice.getStatus())) {
+
+                    deviceData.setDeviceId(subDevice.getDeviceNo());
+                    deviceData.setDeviceName(subDevice.getDeviceName());
+                    deviceData.setProductId(String.valueOf(subDevice.getProductId()));
+                    deviceData.setData(item.toString());
+
+                    deviceDataList.add(deviceData);
+
+                    //插入influxDB
+                    influxDbService.insertDeviceData(deviceData);
+
+                } else {
+                    log.info("设备消息处理器：未查询到边设备信息，边设备标识[{}]，网关id[{}],或设备已停用", deviceNo, device.getId());
+                }
             }
-        }
 
-        return null;
+        });
+
+        return deviceDataList;
     }
 
     /**

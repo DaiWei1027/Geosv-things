@@ -1,10 +1,13 @@
 package com.things.common.groovy;
 
 import com.alibaba.fastjson2.JSONObject;
+import org.apache.commons.compress.utils.Lists;
+
+import java.util.List;
 
 public class TVSProtocol implements GroovyPlugin{
     @Override
-    public JSONObject load(String param) {
+    public List<JSONObject> load(String param) {
         //例如 01 03 08 00 1A 00 02 00 03 00 04 A6 15
         String addressStr = param.substring(0, 2);
         int addr = Integer.parseInt(addressStr, 16);
@@ -30,7 +33,7 @@ public class TVSProtocol implements GroovyPlugin{
         double y = (double) shake2 / 10;
         double z = (double) shake3 / 10;
 
-
+        List<JSONObject> jsonObjects = Lists.newArrayList();
         JSONObject deviceData = new JSONObject();
 
         deviceData.put("addr", addr);
@@ -38,7 +41,7 @@ public class TVSProtocol implements GroovyPlugin{
         deviceData.put("x", x);
         deviceData.put("y", y);
         deviceData.put("z", z);
-
-        return deviceData;
+        jsonObjects.add(deviceData);
+        return jsonObjects;
     }
 }

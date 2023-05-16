@@ -1,5 +1,6 @@
 package com.things.influxdb.vo;
 
+import com.alibaba.fastjson2.JSONObject;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.influxdb.annotation.Column;

@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author DaiWei
@@ -77,13 +78,17 @@ public class DeviceDataController {
         if (StringUtils.isNotEmpty(deviceVo.getDeviceId())) {
             whereMap.put("device_id", deviceVo.getDeviceId());
         }
-        if (StringUtils.isNotEmpty(deviceVo.getProductId().toString())) {
+        if (!Objects.isNull(deviceVo.getProductId())) {
             whereMap.put("product_id", deviceVo.getProductId().toString());
         }
-
         queryModel.setMap(whereMap);
-        queryModel.setStart(LocalDateTime.ofInstant(deviceVo.getStartTime().toInstant(), ZoneId.systemDefault()));
-        queryModel.setEnd(LocalDateTime.ofInstant(deviceVo.getEndTime().toInstant(), ZoneId.systemDefault()));
+        if (!Objects.isNull(deviceVo.getStartTime())){
+            queryModel.setStart(LocalDateTime.ofInstant(deviceVo.getStartTime().toInstant(), ZoneId.systemDefault()));
+        }
+        if (!Objects.isNull(deviceVo.getEndTime())){
+            queryModel.setEnd(LocalDateTime.ofInstant(deviceVo.getEndTime().toInstant(), ZoneId.systemDefault()));
+        }
+
         queryModel.setCurrent((long)deviceVo.getPageNum());
         queryModel.setSize((long)deviceVo.getPageSize());
 

@@ -70,7 +70,7 @@ public class ProtocolManage {
      * @param payload    数据
      * @return JSONObject
      */
-    public JSONObject load(int protocolId, Object payload) {
+    public List<JSONObject> load(int protocolId, Object payload) {
 
         GroovyPlugin groovyPlugin = groovyPluginMap.get(protocolId);
 

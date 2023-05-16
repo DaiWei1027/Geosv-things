@@ -28,7 +28,7 @@ public class Device extends BaseDomain {
     @ApiModelProperty("设备类型 直连设备 device | 网关设备 gateway")
     String deviceType;
 
-    @ApiModelProperty
+    @ApiModelProperty(value = "协议类型",notes = "如mqtt、modbus")
     String ruleType;
 
     @ApiModelProperty("产品id")

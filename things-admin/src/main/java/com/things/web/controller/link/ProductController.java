@@ -39,7 +39,6 @@ public class ProductController extends BaseController {
         product.setCreateBy(getUsername());
         product.setCreateTime(new Date());
         productService.save(product);
-        redisCache.setCacheObject(RedisConstants.PRODUCT + product.getId(), product);
         return AjaxResult.success();
     }
 
@@ -49,7 +48,6 @@ public class ProductController extends BaseController {
     public AjaxResult update(@RequestBody Product product) {
         product.setUpdateBy(getUsername());
         product.setUpdateTime(new Date());
-        redisCache.setCacheObject(RedisConstants.PRODUCT + product.getId(), product);
         return toAjax(productService.updateById(product));
     }
 
@@ -57,7 +55,6 @@ public class ProductController extends BaseController {
     @PostMapping("/delete/{id}")
     @PreAuthorize("@ss.hasPermi('system:config:list')")
     public AjaxResult delete(@PathVariable Integer id) {
-        redisCache.deleteObject(RedisConstants.PRODUCT + id);
         return toAjax(productService.removeById(id));
     }
 
