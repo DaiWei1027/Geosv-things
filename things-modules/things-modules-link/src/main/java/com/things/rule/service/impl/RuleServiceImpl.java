@@ -16,15 +16,12 @@ import com.things.rule.service.IRuleConditionService;
 import com.things.rule.service.IRuleService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.compress.utils.Lists;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author DaiWei
@@ -48,10 +45,6 @@ public class RuleServiceImpl extends ServiceImpl<RuleMapper, Rule> implements IR
 
         List<Rule> rules = ruleMapper.selectList(new LambdaQueryWrapper<>());
 
-        List<Integer> collect = rules.stream().map(Rule::getProductId).distinct().collect(Collectors.toList());
-
-        collect.forEach(productId -> redisCache.deleteObject(RedisConstants.RULE + productId));
-
         rules.forEach(rule -> {
 
             List<RuleCondition> ruleConditionList = ruleConditionService.list(new LambdaQueryWrapper<RuleCondition>().eq(RuleCondition::getRuleId, rule.getId()));
@@ -63,8 +56,7 @@ public class RuleServiceImpl extends ServiceImpl<RuleMapper, Rule> implements IR
             List<ActionVo> actionVos = actionService.listByRuleId(rule.getId());
             ruleVo.setActionVos(actionVos);
 
-            redisCache.rightPush(RedisConstants.RULE + ruleVo.getProductId(), ruleVo);
-
+            redisCache.setCacheObject(RedisConstants.RULE + ruleVo.getProductId(), ruleVo);
         });
 
         log.info("规则业务层：更新规则成功：[{}]条",rules.size());
@@ -96,7 +88,7 @@ public class RuleServiceImpl extends ServiceImpl<RuleMapper, Rule> implements IR
         actionService.insertAction(rule.getId(),actionVos);
 
         ruleVo.setId(rule.getId());
-        redisCache.rightPush(RedisConstants.RULE + ruleVo.getProductId(), ruleVo);
+        redisCache.setCacheObject(RedisConstants.RULE + ruleVo.getProductId(), ruleVo);
 
         return AjaxResult.success();
     }
@@ -120,16 +112,8 @@ public class RuleServiceImpl extends ServiceImpl<RuleMapper, Rule> implements IR
 
         actionService.insertAction(rule.getId(),ruleVo.getActionVos());
 
-        //查询规则缓存
-        List<RuleVo> cacheList = redisCache.getCacheList(RedisConstants.RULE + ruleVo.getProductId());
-        //筛选之前的缓存
-        List<RuleVo> collect = cacheList.stream().filter(item -> item.getId() == rule.getId()).collect(Collectors.toList());
-
-        cacheList.removeAll(collect);
-
-        cacheList.add(ruleVo);
-
-        redisCache.setCacheList(RedisConstants.RULE + ruleVo.getProductId(),cacheList);
+        ruleVo.setId(rule.getId());
+        redisCache.setCacheObject(RedisConstants.RULE + ruleVo.getProductId(), ruleVo);
 
         return AjaxResult.success();
     }

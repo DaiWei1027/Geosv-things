@@ -26,12 +26,12 @@ public class SubDeviceServiceImpl extends ServiceImpl<SubDeviceMapper, SubDevice
     @Override
     public AjaxResult insert(SubDevice subDevice) {
 
-        String deviceNo = subDevice.getDeviceNo();
+        String subDeviceNo = subDevice.getSubDeviceNo();
 
-        Integer count = subDeviceMapper.selectCount(new LambdaQueryWrapper<SubDevice>().eq(SubDevice::getDeviceNo, deviceNo));
+        Integer count = subDeviceMapper.selectCount(new LambdaQueryWrapper<SubDevice>().eq(SubDevice::getSubDeviceNo, subDeviceNo));
 
         if (count > 0) {
-            return AjaxResult.error("设备ID：[" + deviceNo + "] 已存在！");
+            return AjaxResult.error("设备ID：[" + subDeviceNo + "] 已存在！");
         }
 
         subDeviceMapper.insert(subDevice);
@@ -39,12 +39,5 @@ public class SubDeviceServiceImpl extends ServiceImpl<SubDeviceMapper, SubDevice
         return AjaxResult.success();
     }
 
-    @Override
-    public SubDevice getSubDevice(String deviceNo, int gatewayId) {
 
-        return subDeviceMapper.selectOne(new LambdaQueryWrapper<SubDevice>()
-                .eq(SubDevice::getDeviceId, deviceNo)
-                .eq(SubDevice::getGatewayId, gatewayId)
-        );
-    }
 }

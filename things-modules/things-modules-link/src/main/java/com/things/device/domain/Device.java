@@ -28,9 +28,6 @@ public class Device extends BaseDomain {
     @ApiModelProperty("设备类型 直连设备 device | 网关设备 gateway")
     String deviceType;
 
-    @ApiModelProperty
-    String ruleType;
-
     @ApiModelProperty("产品id")
     Integer productId;
 

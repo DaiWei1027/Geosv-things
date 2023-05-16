@@ -21,9 +21,6 @@ public class DeviceData {
     @Column(name = "product_id", tag = true)
     private String productId;
 
-    @Column(name = "device_name", tag = true)
-    private String deviceName;
-
     @Column(name = "data")
     private String data;
 

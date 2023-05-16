@@ -19,12 +19,5 @@ public interface ISubDeviceService extends IService<SubDevice> {
      */
     AjaxResult insert(SubDevice device);
 
-    /**
-     * 边设备唯一编号和网关设备id查询
-     *
-     * @param deviceNo  边设备唯一编号
-     * @param gatewayId 网关id
-     * @return SubDevice
-     */
-    SubDevice getSubDevice(String deviceNo, int gatewayId);
+
 }

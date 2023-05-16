@@ -7,8 +7,6 @@ import com.things.framework.param.Pagination;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import java.util.Date;
-
 /**
  * @author DaiWei
  * @date 2023/03/31 16:00
@@ -34,9 +32,5 @@ public class DeviceVo extends Pagination {
 
     @ApiModelProperty("连接状态")
     String connectionStatus;
-
-    Date startTime;
-
-    Date endTime;
 
 }
