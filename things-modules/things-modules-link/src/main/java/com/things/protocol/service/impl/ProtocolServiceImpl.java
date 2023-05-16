@@ -16,6 +16,8 @@ import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * @author DaiWei
  * @date 2023/03/31 13:11
@@ -43,7 +45,7 @@ public class ProtocolServiceImpl extends ServiceImpl<ProtocolMapper, Protocol> i
     }
 
     @Override
-    public JSONObject execute(ProtocolExecuteParam param) {
+    public List<JSONObject> execute(ProtocolExecuteParam param) {
 
         String protocolContent = StringEscapeUtils.unescapeHtml4(param.getProtocolContent());
 

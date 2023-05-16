@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.things.protocol.domain.Protocol;
 import com.things.protocol.domain.vo.ProtocolExecuteParam;
 
+import java.util.List;
+
 /**
  * @author DaiWei
  * @date 2023/03/31 13:10
@@ -17,7 +19,7 @@ public interface IProtocolService extends IService<Protocol> {
 
     int disabled(Integer id, String status);
 
-    JSONObject execute(ProtocolExecuteParam param);
+    List<JSONObject> execute(ProtocolExecuteParam param);
 
 
 

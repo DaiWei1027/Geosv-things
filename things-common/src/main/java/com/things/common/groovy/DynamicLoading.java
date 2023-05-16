@@ -2,6 +2,8 @@ package com.things.common.groovy;
 
 import com.alibaba.fastjson2.JSONObject;
 
+import java.util.List;
+
 public class DynamicLoading {
 
     /**
@@ -13,7 +15,7 @@ public class DynamicLoading {
 
         String hello = "010308001A000200030004A615";
 
-        JSONObject load = objClass.load(hello);
+        List<JSONObject> load = objClass.load(hello);
 
         System.out.println("返回值是：" + load);
     }
