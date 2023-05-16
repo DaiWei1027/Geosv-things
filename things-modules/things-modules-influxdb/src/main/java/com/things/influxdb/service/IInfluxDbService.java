@@ -17,7 +17,7 @@ public interface IInfluxDbService {
     void insertDeviceData(DeviceData deviceData);
 
     /**
-     * 新增设备数据记录
+     * 新增设备告警记录
      *
      * @param deviceAlarm 设备数据
      */
