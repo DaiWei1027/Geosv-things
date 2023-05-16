@@ -11,10 +11,7 @@ import com.things.device.service.IDeviceService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author DaiWei
@@ -30,22 +27,22 @@ public class DeviceController extends BaseController {
 
     @ApiOperation("新增")
     @PostMapping("/insert")
-    public AjaxResult insert(@RequestBody Device device){
+    public AjaxResult insert(@RequestBody Device device) {
         device.setCreateBy(getUsername());
         return deviceService.insert(device);
     }
 
     @ApiOperation("更新")
     @PostMapping("/update")
-    public AjaxResult update(@RequestBody Device device){
+    public AjaxResult update(@RequestBody Device device) {
 
         Device deviceById = deviceService.getById(device.getId());
 
-        if (deviceById.getDeviceId().equals(device.getDeviceId())){
+        if (deviceById.getDeviceId().equals(device.getDeviceId())) {
             return AjaxResult.error("设备编码不能修改");
         }
 
-        if (deviceById.getConnectionType().equals(device.getConnectionType())){
+        if (deviceById.getConnectionType().equals(device.getConnectionType())) {
             return AjaxResult.error("接入方式不能修改");
         }
 
@@ -54,22 +51,17 @@ public class DeviceController extends BaseController {
     }
 
     @ApiOperation("启用|停用")
-    @PostMapping("/status")
-    public AjaxResult status(@RequestBody Device device){
-
-        Device deviceById = deviceService.getById(device.getId());
-
-        if (deviceById.getConnectionType().equals(device.getConnectionType())){
-            return AjaxResult.error("接入方式不能修改");
-        }
-
+    @GetMapping("/status")
+    public AjaxResult status(Integer id, String status) {
+        Device device = deviceService.getById(id);
+        device.setStatus(status);
         device.setUpdateBy(getUsername());
         return AjaxResult.success(deviceService.updateById(device));
     }
 
     @ApiOperation("分页查询")
     @PostMapping("/page")
-    public AjaxResult page(@RequestBody DeviceVo deviceVo){
+    public AjaxResult page(@RequestBody DeviceVo deviceVo) {
 
         Page<Device> page = new Page<>(deviceVo.getPageNum(), deviceVo.getPageSize());
 

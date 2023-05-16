@@ -11,10 +11,7 @@ import com.things.device.service.ISubDeviceService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author DaiWei
@@ -29,14 +26,14 @@ public class SubDeviceController extends BaseController {
     private ISubDeviceService subDeviceService;
 
     @ApiOperation("新增")
-    @RequestMapping("/insert")
+    @PostMapping("/insert")
     public AjaxResult insert(@RequestBody SubDevice subDevice){
         subDevice.setCreateBy(getUsername());
         return subDeviceService.insert(subDevice);
     }
 
     @ApiOperation("更新")
-    @RequestMapping("/update")
+    @PostMapping("/update")
     public AjaxResult update(@RequestBody SubDevice subDevice){
 
         SubDevice subDeviceById = subDeviceService.getById(subDevice.getId());
@@ -51,11 +48,10 @@ public class SubDeviceController extends BaseController {
     }
 
     @ApiOperation("启用|停用")
-    @RequestMapping("/status")
-    public AjaxResult status(@RequestBody SubDevice subDevice){
-
-        SubDevice subDeviceById = subDeviceService.getById(subDevice.getId());
-        
+    @GetMapping("/status")
+    public AjaxResult status(Integer id , String status){
+        SubDevice subDevice = subDeviceService.getById(id);
+        subDevice.setStatus(status);
         subDevice.setUpdateBy(getUsername());
         return AjaxResult.success(subDeviceService.updateById(subDevice));
     }
