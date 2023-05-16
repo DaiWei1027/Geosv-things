@@ -5,9 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.things.common.core.controller.BaseController;
 import com.things.common.core.domain.AjaxResult;
 import com.things.common.utils.StringUtils;
-import com.things.device.domain.Device;
 import com.things.device.domain.SubDevice;
-import com.things.device.domain.vo.DeviceVo;
 import com.things.device.domain.vo.SubDeviceVo;
 import com.things.device.service.ISubDeviceService;
 import io.swagger.annotations.Api;
@@ -43,7 +41,7 @@ public class SubDeviceController extends BaseController {
 
         SubDevice subDeviceById = subDeviceService.getById(subDevice.getId());
 
-        if (subDeviceById.getSubDeviceNo().equals(subDevice.getSubDeviceId())){
+        if (subDeviceById.getDeviceNo().equals(subDevice.getDeviceNo())){
             return AjaxResult.error("设备编码不能修改");
         }
         
@@ -69,7 +67,7 @@ public class SubDeviceController extends BaseController {
         Page<SubDevice> page = new Page<>(subDeviceVo.getPageNum(), subDeviceVo.getPageSize());
 
         Page<SubDevice> pageData = subDeviceService.page(page, new LambdaQueryWrapper<SubDevice>()
-                .eq(StringUtils.isNotEmpty(subDeviceVo.getSubDeviceNo()), SubDevice::getSubDeviceId, subDeviceVo.getSubDeviceNo())
+                .eq(StringUtils.isNotEmpty(subDeviceVo.getDeviceNo()), SubDevice::getDeviceNo, subDeviceVo.getDeviceNo())
                 .like(StringUtils.isNotEmpty(subDeviceVo.getDeviceName()), SubDevice::getDeviceName, subDeviceVo.getDeviceName())
                 .eq(StringUtils.isNotEmpty(subDeviceVo.getConnectionStatus()), SubDevice::getConnectionStatus, subDeviceVo.getConnectionStatus())
                 .eq(StringUtils.isNotEmpty(subDeviceVo.getStatus()), SubDevice::getStatus, subDeviceVo.getStatus())
