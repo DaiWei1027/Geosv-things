@@ -61,53 +61,56 @@ public class RuleHandler {
         if (!CollectionUtils.isEmpty(productParamList)) {
 
             //查询规则
-            RuleVo ruleVo = redisCache.getCacheObject(RedisConstants.RULE + productId);
+            List<RuleVo> ruleVos = redisCache.getCacheList(RedisConstants.RULE + productId);
 
-            List<Boolean> flags = Lists.newArrayList();
+            ruleVos.forEach(ruleVo -> {
 
-            if (null != ruleVo) {
+                List<Boolean> flags = Lists.newArrayList();
 
-                List<RuleCondition> ruleConditions = ruleVo.getRuleConditions();
+                if (null != ruleVo) {
 
-                for (RuleCondition ruleCondition : ruleConditions) {
+                    List<RuleCondition> ruleConditions = ruleVo.getRuleConditions();
 
-                    Object value = data.get(ruleCondition.getParam());
+                    for (RuleCondition ruleCondition : ruleConditions) {
 
-                    flags.add(rule(ruleCondition, value));
+                        Object value = data.get(ruleCondition.getParam());
 
-                }
+                        flags.add(rule(ruleCondition, value));
 
-                //是否满足条件、执行动作
-                boolean actionFlag = false;
+                    }
 
-                if (!Objects.isNull(ruleVo.getTriggering())){
+                    //是否满足条件、执行动作
+                    boolean actionFlag = false;
 
-                    switch (ruleVo.getTriggering()){
+                    if (!Objects.isNull(ruleVo.getTriggering())){
 
-                        case RuleEnum.ALL:
-                            actionFlag = flags.stream().allMatch(s -> s.equals(true));
-                            break;
-                        case RuleEnum.ANY:
-                            actionFlag = flags.stream().anyMatch(s -> s.equals(true));
-                            break;
-                        default:
-                            break;
+                        switch (ruleVo.getTriggering()){
+
+                            case RuleEnum.ALL:
+                                actionFlag = flags.stream().allMatch(s -> s.equals(true));
+                                break;
+                            case RuleEnum.ANY:
+                                actionFlag = flags.stream().anyMatch(s -> s.equals(true));
+                                break;
+                            default:
+                                break;
+                        }
+
+                    }
+
+                    if (actionFlag){
+
+                        List<ActionVo> actionVos = ruleVo.getActionVos();
+
+                        if (!CollectionUtils.isEmpty(actionVos)){
+                            actionHandler.action(actionVos, deviceData);
+                        }
+
                     }
 
                 }
 
-                if (actionFlag){
-
-                    List<ActionVo> actionVos = ruleVo.getActionVos();
-
-                    if (!CollectionUtils.isEmpty(actionVos)){
-                        actionHandler.action(actionVos, deviceData);
-                    }
-
-                }
-
-
-            }
+            });
 
         }
 

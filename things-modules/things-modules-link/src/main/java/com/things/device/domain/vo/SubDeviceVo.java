@@ -16,10 +16,10 @@ public class SubDeviceVo extends Pagination {
      * 边设备唯一标识
      */
     @ApiModelProperty("子设备唯一标识")
-    String subDeviceId;
+    String deviceId;
 
     @ApiModelProperty("设备唯一标识")
-    String subDeviceNo;
+    String deviceNo;
 
     /**
      * 设备名称

@@ -142,6 +142,12 @@ public class RedisCache
         return count == null ? 0 : count;
     }
 
+    public <T> long rightPush(final String key, final T value)
+    {
+        Long count = redisTemplate.opsForList().rightPush(key, value);
+        return count == null ? 0 : count;
+    }
+
     /**
      * 获得缓存的list对象
      *
