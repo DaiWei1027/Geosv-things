@@ -43,6 +43,6 @@ public class DeviceMessageConsumer {
 
         final Object payload = message.getPayload();
 
-        deviceMessageHandler.handleMessage(productId, deviceId, payload);
+        deviceMessageHandler.mqttMessage(productId, deviceId, payload);
     }
 }

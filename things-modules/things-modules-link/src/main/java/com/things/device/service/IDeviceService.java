@@ -26,4 +26,18 @@ public interface IDeviceService extends IService<Device> {
      * @return Device
      */
     Device selectByDeviceId(String deviceId);
+
+    /**
+     * 设备下线
+     *
+     * @param deviceId 设备id
+     */
+    void offline(String deviceId);
+
+    /**
+     * 设备下线
+     *
+     * @param deviceId 设备id
+     */
+    void online(String deviceId);
 }

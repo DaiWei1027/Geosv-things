@@ -3,5 +3,17 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.things.device.mapper.DeviceMapper">
-    
+
+    <update id="online" parameterType="java.lang.String">
+
+        update device set connection_status = '0' where device_id = #{deviceId}
+
+    </update>
+
+    <update id="offline" parameterType="java.lang.String">
+
+        update device set connection_status = '1' where device_id = #{deviceId}
+
+    </update>
+
 </mapper>

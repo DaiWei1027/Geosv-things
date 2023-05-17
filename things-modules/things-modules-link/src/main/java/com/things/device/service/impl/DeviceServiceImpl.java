@@ -2,6 +2,7 @@ package com.things.device.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.things.common.constant.DeviceConstants;
 import com.things.common.constant.RedisConstants;
 import com.things.common.core.domain.AjaxResult;
 import com.things.common.core.redis.RedisCache;
@@ -17,6 +18,7 @@ import com.things.utils.ConnectionUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -41,7 +43,8 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
         if (count > 0) {
             return AjaxResult.error("设备ID：[" + deviceId + "] 已存在！");
         }
-
+        device.setCreateTime(new Date());
+        device.setConnectionStatus(DeviceConstants.OFFLINE);
         deviceMapper.insert(device);
 
         ConnectionUtil.ConnectionData connectionData = connectionUtil.connectionData(device.getConnectionType(), deviceId, device.getProductId().toString());
@@ -56,4 +59,14 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
 
     }
 
+
+    @Override
+    public void offline(String deviceId) {
+        deviceMapper.offline(deviceId);
+    }
+
+    @Override
+    public void online(String deviceId) {
+        deviceMapper.online(deviceId);
+    }
 }

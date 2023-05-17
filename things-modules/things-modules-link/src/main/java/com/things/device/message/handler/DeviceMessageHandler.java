@@ -16,6 +16,7 @@ import com.things.mqtt.mqtt.MqttGateway;
 import com.things.product.domain.vo.ProductParams;
 import com.things.protocol.domain.Protocol;
 import com.things.protocol.utils.ProtocolManage;
+import com.things.tcp.handler.NettyMessageHandler;
 import com.things.utils.ByteUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
@@ -34,7 +35,7 @@ import java.util.Objects;
  **/
 @Slf4j
 @Component
-public class DeviceMessageHandler {
+public class DeviceMessageHandler implements NettyMessageHandler {
 
     @Autowired
     private ProtocolManage protocolManage;
@@ -58,7 +59,7 @@ public class DeviceMessageHandler {
     @Qualifier("deviceExecutor")
     private ThreadPoolTaskExecutor deviceExecutor;
 
-    public void handleMessage(String productId, String deviceId, Object payload) {
+    public void mqttMessage(String productId, String deviceId, Object payload) {
 
         final ProductParams productParams = redisCache.getCacheObject(RedisConstants.PRODUCT + productId);
 
@@ -129,7 +130,14 @@ public class DeviceMessageHandler {
 
         }
 
+    }
 
+    @Override
+    public void nettyMessage(String deviceId , Object payload) {
+
+        Device device = deviceService.selectByDeviceId(deviceId);
+
+        mqttMessage(device.getProductId().toString(),deviceId,payload);
     }
 
     /**
@@ -228,4 +236,6 @@ public class DeviceMessageHandler {
         return payload;
 
     }
+
+
 }

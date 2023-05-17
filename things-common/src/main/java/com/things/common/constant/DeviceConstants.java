@@ -30,4 +30,14 @@ public class DeviceConstants {
      * 禁用
      */
     public static final String DISABLE = "1";
+
+    /**
+     * 在线
+     */
+    public static final String ONLINE = "0";
+
+    /**
+     * 离线
+     */
+    public static final String OFFLINE = "1";
 }
