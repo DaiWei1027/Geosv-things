@@ -8,6 +8,7 @@ import com.things.common.core.domain.AjaxResult;
 import com.things.common.core.redis.RedisCache;
 import com.things.common.utils.StringUtils;
 import com.things.product.domain.Product;
+import com.things.product.domain.vo.ProductParams;
 import com.things.product.service.IProductService;
 import com.things.product.domain.vo.ProductVo;
 import io.swagger.annotations.Api;
@@ -39,6 +40,9 @@ public class ProductController extends BaseController {
         product.setCreateBy(getUsername());
         product.setCreateTime(new Date());
         productService.save(product);
+        ProductParams productParams = new ProductParams();
+        productParams.setProduct(product);
+        redisCache.setCacheObject(RedisConstants.PRODUCT + product.getId(),productParams);
         return AjaxResult.success();
     }
 
@@ -48,6 +52,9 @@ public class ProductController extends BaseController {
     public AjaxResult update(@RequestBody Product product) {
         product.setUpdateBy(getUsername());
         product.setUpdateTime(new Date());
+        ProductParams productParams = new ProductParams();
+        productParams.setProduct(product);
+        redisCache.setCacheObject(RedisConstants.PRODUCT + product.getId(),productParams);
         return toAjax(productService.updateById(product));
     }
 
@@ -55,6 +62,7 @@ public class ProductController extends BaseController {
     @PostMapping("/delete/{id}")
     @PreAuthorize("@ss.hasPermi('system:config:list')")
     public AjaxResult delete(@PathVariable Integer id) {
+        redisCache.deleteObject(RedisConstants.PRODUCT + id);
         return toAjax(productService.removeById(id));
     }
 
