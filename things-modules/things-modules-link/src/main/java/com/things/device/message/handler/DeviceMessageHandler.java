@@ -132,12 +132,18 @@ public class DeviceMessageHandler implements NettyMessageHandler {
 
     }
 
+    /**
+     * TCP设备消息处理
+     *
+     * @param deviceId 设备id
+     * @param payload  数据
+     */
     @Override
-    public void nettyMessage(String deviceId , Object payload) {
+    public void nettyMessage(String deviceId, Object payload) {
 
         Device device = deviceService.selectByDeviceId(deviceId);
 
-        mqttMessage(device.getProductId().toString(),deviceId,payload);
+        mqttMessage(device.getProductId().toString(), deviceId, ByteUtil.hexString2Bytes(payload.toString()));
     }
 
     /**
@@ -151,7 +157,7 @@ public class DeviceMessageHandler implements NettyMessageHandler {
 
         List<DeviceData> deviceDataList = Lists.newArrayList();
 
-        data.forEach(item ->{
+        data.forEach(item -> {
 
             DeviceData deviceData = new DeviceData();
             deviceData.setData(item.toString());
@@ -178,7 +184,7 @@ public class DeviceMessageHandler implements NettyMessageHandler {
 
         List<DeviceData> deviceDataList = Lists.newArrayList();
 
-        data.forEach( item -> {
+        data.forEach(item -> {
 
             DeviceData deviceData = new DeviceData();
 
