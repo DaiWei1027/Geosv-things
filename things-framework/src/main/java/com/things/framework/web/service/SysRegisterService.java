@@ -45,11 +45,11 @@ public class SysRegisterService
         sysUser.setUserName(username);
 
         // 验证码开关
-//        boolean captchaEnabled = configService.selectCaptchaEnabled();
-//        if (captchaEnabled)
-//        {
-//            validateCaptcha(username, registerBody.getCode(), registerBody.getUuid());
-//        }
+        boolean captchaEnabled = configService.selectCaptchaEnabled();
+        if (captchaEnabled)
+        {
+            validateCaptcha(username, registerBody.getCode(), registerBody.getUuid());
+        }
 
         if (StringUtils.isEmpty(username))
         {
