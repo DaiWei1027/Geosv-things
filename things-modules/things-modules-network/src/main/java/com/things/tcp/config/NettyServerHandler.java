@@ -51,7 +51,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
         log.info("当前活跃线程数{}", threadPool.getActiveCount());
 
         if (payload.toString().startsWith(HEART_BEAT)) {
-            //心跳抱处理
+            //心跳包处理
             heartBeat(ctx, payload);
 
         } else {
