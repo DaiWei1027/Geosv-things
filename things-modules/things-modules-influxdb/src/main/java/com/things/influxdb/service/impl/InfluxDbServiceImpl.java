@@ -31,7 +31,7 @@ public class InfluxDbServiceImpl implements IInfluxDbService {
         Map<String, Object> fields = Maps.newHashMap();
 
         tags.put("device_id", deviceData.getDeviceId());
-        fields.put("productId", deviceData.getProductId());
+        fields.put("product_id", deviceData.getProductId());
         fields.put("data", deviceData.getData());
 
         long time = System.currentTimeMillis() / 1000;
