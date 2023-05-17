@@ -75,7 +75,11 @@ public class RuleHandler {
 
                         Object value = data.get(ruleCondition.getParam());
 
-                        flags.add(rule(ruleCondition, value));
+                        if (null != value){
+
+                            flags.add(rule(ruleCondition, value));
+
+                        }
 
                     }
 
