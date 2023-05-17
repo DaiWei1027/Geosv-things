@@ -53,7 +53,7 @@ public class DeviceDataController {
         return AjaxResult.success(deviceData);
     }
 
-    @ApiOperation("设备历史数据")
+    @ApiOperation("设备告警记录")
     @PostMapping("/alarm")
     public AjaxResult pageAlarm(@RequestBody DeviceVo deviceVo){
 
