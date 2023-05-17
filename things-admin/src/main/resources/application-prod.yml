@@ -96,7 +96,7 @@ mqtt:
     in-client-id: ${random.value}         # 随机值，使出入站 client ID 不同
     out-client-id: ${random.value}
     client-id: ${random.int}                   # 客户端Id，不能相同，采用随机数 ${random.value}
-    default-topic: /ElectricMachine/AS/UP/#,/ElectricMachine/JSDS/UP/#,/ElectricMachine/TVS/UP/#     # 默认主题
+    default-topic: /ElectricMachine/AS/UP/#,/ElectricMachine/JSDS/UP/#,/ElectricMachine/TVS/UP/# ,$SYS/brokers/+/clients/#    # 默认主题
     timeout: 60                                # 超时时间
     keepalive: 60                              # 保持连接
     clearSession: false                         # 清除会话(设置为false,断开连接，重连后使用原来的会话 保留订阅的主题，能接收离线期间的消息)

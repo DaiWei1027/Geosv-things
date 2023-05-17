@@ -96,7 +96,7 @@ mqtt:
   in-client-id: tings-server-in         # 随机值，使出入站 client ID 不同
   out-client-id: tings-server-out
   client-id: tings-server                  # 客户端Id，不能相同，采用随机数 ${random.value}
-  default-topic: /v1/device/upload/message/#,/v1/device/down/message/#,/v1/device/rule    # 默认主题
+  default-topic: /v1/device/upload/message/#,/v1/device/down/message/#,/v1/device/rule ,$SYS/brokers/+/clients/#   # 默认主题
   timeout: 60                                # 超时时间
   keepalive: 60                              # 保持连接
   clearSession: false                         # 清除会话(设置为false,断开连接，重连后使用原来的会话 保留订阅的主题，能接收离线期间的消息)

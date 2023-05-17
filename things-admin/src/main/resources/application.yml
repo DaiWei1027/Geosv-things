@@ -110,3 +110,9 @@ xss:
   excludes: /system/notice
   # 匹配链接
   urlPatterns: /system/*,/monitor/*,/tool/*
+
+netty:
+  port: 9002
+  bossGroup: 1
+  workGroup: 200
+  queueSize: 1024
