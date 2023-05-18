@@ -28,8 +28,6 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
 
     private final ProductMapper productMapper;
 
-    private final EventParamMapper eventParamMapper;
-
     private final RedisCache redisCache;
 
     @PostConstruct
@@ -39,13 +37,7 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
 
         products.forEach(product -> {
 
-            List<EventParam> eventParamList = eventParamMapper.selectList(new LambdaQueryWrapper<EventParam>().eq(EventParam::getProductId, product.getId()));
-
-            ProductParams productParams = new ProductParams();
-            productParams.setProduct(product);
-            productParams.setEventParamList(eventParamList);
-
-            redisCache.setCacheObject(RedisConstants.PRODUCT + product.getId(), productParams);
+            redisCache.setCacheObject(RedisConstants.PRODUCT + product.getId(), product);
         });
 
         log.info("产品管理：更新产品信息成功：[{}]条", products.size());

@@ -22,7 +22,7 @@ import java.util.Date;
  **/
 @Api(tags = "产品事件管理")
 @RestController
-@RequestMapping("/link/product")
+@RequestMapping("/link/prodEvent")
 @AllArgsConstructor
 public class ProdEventController extends BaseController {
 
