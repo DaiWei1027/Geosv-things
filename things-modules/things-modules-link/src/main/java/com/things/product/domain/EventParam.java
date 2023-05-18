@@ -13,13 +13,13 @@ import lombok.Data;
  * @date 2023/05/09 09:18
  **/
 @Data
-public class ProductParam extends BaseDomain {
+public class EventParam extends BaseDomain {
 
     @TableId(type = IdType.AUTO)
     int id;
 
     @ApiModelProperty(name = "产品id",required = true)
-    int productId;
+    int eventId;
 
     @ApiModelProperty(name = "参数名称",required = true)
     String paramName;

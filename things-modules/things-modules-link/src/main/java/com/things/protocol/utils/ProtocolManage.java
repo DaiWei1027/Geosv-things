@@ -41,7 +41,7 @@ public class ProtocolManage {
 
             redisCache.setCacheObject(RedisConstants.PROTOCOL + protocol.getId(), protocol);
 
-            //加载动态脚本并缓存
+            //加载动态脚本实例化
             try {
                 GroovyPlugin objClass = GroovyUtils.instanceTaskGroovyScript(protocol.getProtocolContent());
                 groovyPluginMap.put(protocol.getId(), objClass);

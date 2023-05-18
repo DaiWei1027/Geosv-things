@@ -5,10 +5,10 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.things.common.constant.RedisConstants;
 import com.things.common.core.redis.RedisCache;
 import com.things.product.domain.Product;
-import com.things.product.domain.ProductParam;
+import com.things.product.domain.EventParam;
 import com.things.product.domain.vo.ProductParams;
 import com.things.product.mapper.ProductMapper;
-import com.things.product.mapper.ProductParamMapper;
+import com.things.product.mapper.EventParamMapper;
 import com.things.product.service.IProductService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +28,7 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
 
     private final ProductMapper productMapper;
 
-    private final ProductParamMapper productParamMapper;
+    private final EventParamMapper eventParamMapper;
 
     private final RedisCache redisCache;
 
@@ -39,11 +39,11 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
 
         products.forEach(product -> {
 
-            List<ProductParam> productParamList = productParamMapper.selectList(new LambdaQueryWrapper<ProductParam>().eq(ProductParam::getProductId, product.getId()));
+            List<EventParam> eventParamList = eventParamMapper.selectList(new LambdaQueryWrapper<EventParam>().eq(EventParam::getProductId, product.getId()));
 
             ProductParams productParams = new ProductParams();
             productParams.setProduct(product);
-            productParams.setProductParamList(productParamList);
+            productParams.setEventParamList(eventParamList);
 
             redisCache.setCacheObject(RedisConstants.PRODUCT + product.getId(), productParams);
         });

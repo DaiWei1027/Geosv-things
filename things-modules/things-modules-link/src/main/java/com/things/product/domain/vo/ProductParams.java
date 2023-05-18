@@ -1,7 +1,7 @@
 package com.things.product.domain.vo;
 
 import com.things.product.domain.Product;
-import com.things.product.domain.ProductParam;
+import com.things.product.domain.EventParam;
 import lombok.Data;
 
 import java.util.List;
@@ -23,5 +23,5 @@ public class ProductParams {
     /**
      * 产品参数信息
      */
-    List<ProductParam> productParamList;
+    List<EventParam> eventParamList;
 }

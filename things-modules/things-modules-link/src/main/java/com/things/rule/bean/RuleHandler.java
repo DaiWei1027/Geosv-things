@@ -5,7 +5,7 @@ import com.things.common.constant.RedisConstants;
 import com.things.common.core.redis.RedisCache;
 import com.things.common.enums.RuleEnum;
 import com.things.influxdb.vo.DeviceData;
-import com.things.product.domain.ProductParam;
+import com.things.product.domain.EventParam;
 import com.things.product.domain.vo.ProductParams;
 import com.things.rule.domain.RuleCondition;
 import com.things.rule.domain.vo.ActionVo;
@@ -56,9 +56,9 @@ public class RuleHandler {
 
         ProductParams productParams = redisCache.getCacheObject(RedisConstants.PRODUCT + productId);
 
-        List<ProductParam> productParamList = productParams.getProductParamList();
+        List<EventParam> eventParamList = productParams.getEventParamList();
 
-        if (!CollectionUtils.isEmpty(productParamList)) {
+        if (!CollectionUtils.isEmpty(eventParamList)) {
 
             //查询规则
             List<RuleVo> ruleVos = redisCache.getCacheList(RedisConstants.RULE + productId);
