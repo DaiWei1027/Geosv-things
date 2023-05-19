@@ -7,16 +7,14 @@ import com.things.common.core.redis.RedisCache;
 import com.things.product.domain.EventParam;
 import com.things.product.domain.ProdEvent;
 import com.things.product.domain.vo.ProdEventParams;
-import com.things.product.mapper.ProdEventMapper;
-import com.things.product.mapper.ProductMapper;
 import com.things.product.mapper.EventParamMapper;
+import com.things.product.mapper.ProdEventMapper;
 import com.things.product.service.IProdEventService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -38,7 +36,7 @@ public class ProdEventServiceImpl extends ServiceImpl<ProdEventMapper, ProdEvent
     private void init() {
 
         List<ProdEvent> prodEvents = prodEventMapper.selectList(new LambdaQueryWrapper<>());
-        prodEvents.stream().map(ProdEvent::getProductId).distinct().forEach(productId->redisCache.deleteObject(productId.toString()));
+        prodEvents.stream().map(ProdEvent::getProductId).distinct().forEach(productId->redisCache.deleteObject(RedisConstants.PROD_EVENT + productId.toString()));
         prodEvents.forEach(prodEvent -> {
 
             List<EventParam> eventParamList = eventParamMapper.selectList(new LambdaQueryWrapper<EventParam>().eq(EventParam::getEventId, prodEvent.getId()));
