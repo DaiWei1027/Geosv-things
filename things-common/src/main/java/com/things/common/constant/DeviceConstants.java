@@ -40,4 +40,7 @@ public class DeviceConstants {
      * 离线
      */
     public static final String OFFLINE = "1";
+
+    public static final String TCP = "TCP";
+    public static final String MQTT = "MQTT";
 }
