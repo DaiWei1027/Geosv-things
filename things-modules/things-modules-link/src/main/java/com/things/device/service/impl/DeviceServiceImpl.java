@@ -8,6 +8,7 @@ import com.things.common.core.domain.AjaxResult;
 import com.things.common.core.redis.RedisCache;
 import com.things.common.enums.DeviceStatus;
 import com.things.device.domain.Device;
+import com.things.device.domain.vo.OnlineCount;
 import com.things.device.mapper.DeviceMapper;
 import com.things.device.service.IDeviceService;
 import com.things.product.domain.Product;
@@ -68,5 +69,10 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
     @Override
     public void online(String deviceId) {
         deviceMapper.online(deviceId);
+    }
+
+    @Override
+    public OnlineCount onlineCount() {
+        return deviceMapper.onlineCount();
     }
 }

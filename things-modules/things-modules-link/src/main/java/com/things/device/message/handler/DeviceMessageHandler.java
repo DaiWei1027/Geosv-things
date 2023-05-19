@@ -13,6 +13,7 @@ import com.things.device.service.ISubDeviceService;
 import com.things.influxdb.service.IInfluxDbService;
 import com.things.influxdb.vo.DeviceData;
 import com.things.mqtt.mqtt.MqttGateway;
+import com.things.product.domain.Product;
 import com.things.product.domain.vo.ProductParams;
 import com.things.protocol.domain.Protocol;
 import com.things.protocol.utils.ProtocolManage;
@@ -61,14 +62,14 @@ public class DeviceMessageHandler implements NettyMessageHandler {
 
     public void mqttMessage(String productId, String deviceId, Object payload) {
 
-        final ProductParams productParams = redisCache.getCacheObject(RedisConstants.PRODUCT + productId);
+        final Product product = redisCache.getCacheObject(RedisConstants.PRODUCT + productId);
 
-        if (Objects.isNull(productParams)) {
+        if (Objects.isNull(product)) {
             log.info("设备消息处理器：查询产品信息为空为空，产品ID[{}]，设备编号[{}]", productId, deviceId);
             return;
         }
 
-        final Protocol protocol = redisCache.getCacheObject(RedisConstants.PROTOCOL + productParams.getProduct().getProtocolId());
+        final Protocol protocol = redisCache.getCacheObject(RedisConstants.PROTOCOL + product.getProtocolId());
 
         if (Objects.isNull(protocol)) {
             log.info("设备消息处理器：查询协议为空，产品ID[{}]，设备编号[{}]", productId, deviceId);

@@ -16,4 +16,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     </update>
 
+    <select id="onlineCount" resultType="OnlineCount">
+
+        select
+            COUNT(1) AS total,
+            SUM(case when connection_status = 0 THEN 1 ELSE 0 END) as onlineNumber,
+            SUM(case when connection_status = 1 THEN 1 ELSE 0 END) as offlineNumber
+        from device
+    </select>
+
 </mapper>

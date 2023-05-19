@@ -3,6 +3,7 @@ package com.things.device.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.things.common.core.domain.AjaxResult;
 import com.things.device.domain.Device;
+import com.things.device.domain.vo.OnlineCount;
 
 /**
  * @author DaiWei
@@ -40,4 +41,12 @@ public interface IDeviceService extends IService<Device> {
      * @param deviceId 设备id
      */
     void online(String deviceId);
+
+    /**
+     * 在线离线数量统计
+     *
+     * @return OnlineCount
+     */
+    OnlineCount onlineCount();
+
 }
