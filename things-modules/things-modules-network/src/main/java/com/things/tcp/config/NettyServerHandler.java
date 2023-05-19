@@ -29,7 +29,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
     public static Map<String, ChannelHandlerContext> channelMap = new HashMap<>();
 
     /**
-     * HB的16进制字符
+     * HB的16进制字符（规定心跳注册包格式为HB=设备ID）
      */
     public static final String HEART_BEAT = "4842";
 
