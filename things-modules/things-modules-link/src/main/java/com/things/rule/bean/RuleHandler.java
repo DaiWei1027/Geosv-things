@@ -1,11 +1,14 @@
 package com.things.rule.bean;
 
 import com.alibaba.fastjson2.JSONObject;
+import com.github.pagehelper.util.StringUtil;
 import com.things.common.constant.RedisConstants;
 import com.things.common.core.redis.RedisCache;
 import com.things.common.enums.RuleEnum;
 import com.things.influxdb.vo.DeviceData;
 import com.things.product.domain.EventParam;
+import com.things.product.domain.ProdEvent;
+import com.things.product.domain.vo.ProdEventParams;
 import com.things.product.domain.vo.ProductParams;
 import com.things.rule.domain.RuleCondition;
 import com.things.rule.domain.vo.ActionVo;
@@ -16,12 +19,14 @@ import org.apache.commons.compress.utils.Lists;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 
 /**
@@ -43,6 +48,11 @@ public class RuleHandler {
 
     public static final String SCOPE = "设置范围";
 
+    /**
+     * 事件字段
+     */
+    public static final String EVENT = "event";
+
     private final RedisCache redisCache;
 
     private final ActionHandler actionHandler;
@@ -54,68 +64,77 @@ public class RuleHandler {
 
         JSONObject data = JSONObject.parseObject(deviceData.getData());
 
-        ProductParams productParams = redisCache.getCacheObject(RedisConstants.PRODUCT + productId);
+        Object eventObject = data.get(EVENT);
 
-        List<EventParam> eventParamList = productParams.getEventParamList();
+        if (!Objects.isNull(eventObject)){
 
-        if (!CollectionUtils.isEmpty(eventParamList)) {
+            String event = eventObject.toString();
 
-            //查询规则
-            List<RuleVo> ruleVos = redisCache.getCacheList(RedisConstants.RULE + productId);
+            List<ProdEventParams> prodEventParamsList = redisCache.getCacheList(RedisConstants.PROD_EVENT + productId);
 
-            ruleVos.forEach(ruleVo -> {
+            ProdEventParams prodEventParams = prodEventParamsList.stream().filter(item -> event.equals(item.getProdEvent().getEventIdentify())).findAny().get();
 
-                List<Boolean> flags = Lists.newArrayList();
+            List<EventParam> eventParamList = prodEventParams.getEventParamList();
 
-                if (null != ruleVo) {
+            if (!CollectionUtils.isEmpty(eventParamList)) {
 
-                    List<RuleCondition> ruleConditions = ruleVo.getRuleConditions();
+                //查询规则
+                List<RuleVo> ruleVos = redisCache.getCacheList(RedisConstants.RULE + productId);
 
-                    for (RuleCondition ruleCondition : ruleConditions) {
+                ruleVos.forEach(ruleVo -> {
 
-                        Object value = data.get(ruleCondition.getParam());
+                    List<Boolean> flags = Lists.newArrayList();
 
-                        if (null != value){
+                    if (null != ruleVo) {
 
-                            flags.add(rule(ruleCondition, value));
+                        List<RuleCondition> ruleConditions = ruleVo.getRuleConditions();
+
+                        for (RuleCondition ruleCondition : ruleConditions) {
+
+                            Object value = data.get(ruleCondition.getParam());
+
+                            if (null != value){
+
+                                flags.add(rule(ruleCondition, value));
+
+                            }
+
+                        }
+
+                        //是否满足条件、执行动作
+                        boolean actionFlag = false;
+
+                        if (!Objects.isNull(ruleVo.getTriggering())){
+
+                            switch (ruleVo.getTriggering()){
+
+                                case RuleEnum.ALL:
+                                    actionFlag = flags.stream().allMatch(s -> s.equals(true));
+                                    break;
+                                case RuleEnum.ANY:
+                                    actionFlag = flags.stream().anyMatch(s -> s.equals(true));
+                                    break;
+                                default:
+                                    break;
+                            }
+
+                        }
+
+                        if (actionFlag){
+
+                            List<ActionVo> actionVos = ruleVo.getActionVos();
+
+                            if (!CollectionUtils.isEmpty(actionVos)){
+                                actionHandler.action(actionVos, deviceData);
+                            }
 
                         }
 
                     }
 
-                    //是否满足条件、执行动作
-                    boolean actionFlag = false;
+                });
 
-                    if (!Objects.isNull(ruleVo.getTriggering())){
-
-                        switch (ruleVo.getTriggering()){
-
-                            case RuleEnum.ALL:
-                                actionFlag = flags.stream().allMatch(s -> s.equals(true));
-                                break;
-                            case RuleEnum.ANY:
-                                actionFlag = flags.stream().anyMatch(s -> s.equals(true));
-                                break;
-                            default:
-                                break;
-                        }
-
-                    }
-
-                    if (actionFlag){
-
-                        List<ActionVo> actionVos = ruleVo.getActionVos();
-
-                        if (!CollectionUtils.isEmpty(actionVos)){
-                            actionHandler.action(actionVos, deviceData);
-                        }
-
-                    }
-
-                }
-
-            });
-
+            }
         }
 
     }
