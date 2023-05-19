@@ -24,6 +24,11 @@ public class DeviceRuleConsumer {
 
     private final RuleHandler ruleHandler;
 
+    /**
+     * 设备消息按规则处理
+     *
+     * @param message 设备消息
+     */
     @MqttTopic(TopicConstants.DEVICE_RULE_TOPIC)
     public void onMessage(Message<?> message) {
 

@@ -20,7 +20,10 @@ public class RuleCondition {
     @ApiModelProperty
     int ruleId;
 
-    @ApiModelProperty(name = "参数")
+    /**
+     * 设备数据中某个参数的名称
+     */
+    @ApiModelProperty(name = "参数名称")
     String param;
 
     @ApiModelProperty(name = "关系运算符")

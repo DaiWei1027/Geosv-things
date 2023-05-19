@@ -1,15 +1,13 @@
 package com.things.rule.bean;
 
 import com.alibaba.fastjson2.JSONObject;
-import com.github.pagehelper.util.StringUtil;
 import com.things.common.constant.RedisConstants;
 import com.things.common.core.redis.RedisCache;
 import com.things.common.enums.RuleEnum;
+import com.things.device.bean.RealTimeLogHandler;
 import com.things.influxdb.vo.DeviceData;
 import com.things.product.domain.EventParam;
-import com.things.product.domain.ProdEvent;
 import com.things.product.domain.vo.ProdEventParams;
-import com.things.product.domain.vo.ProductParams;
 import com.things.rule.domain.RuleCondition;
 import com.things.rule.domain.vo.ActionVo;
 import com.things.rule.domain.vo.RuleVo;
@@ -19,14 +17,12 @@ import org.apache.commons.compress.utils.Lists;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 
 /**
@@ -49,7 +45,7 @@ public class RuleHandler {
     public static final String SCOPE = "设置范围";
 
     /**
-     * 事件字段
+     * 产品事件字段
      */
     public static final String EVENT = "event";
 
@@ -57,22 +53,27 @@ public class RuleHandler {
 
     private final ActionHandler actionHandler;
 
+    private final RealTimeLogHandler realTimeLogHandler;
+
     @Async("ruleExecutor")
     public void handle(DeviceData deviceData) {
 
         String productId = deviceData.getProductId();
 
         JSONObject data = JSONObject.parseObject(deviceData.getData());
-
+        //获取事件标识
         Object eventObject = data.get(EVENT);
 
-        if (!Objects.isNull(eventObject)){
+        if (!Objects.isNull(eventObject)) {
 
             String event = eventObject.toString();
-
+            //从缓存中取产品事件以及事件参数
             List<ProdEventParams> prodEventParamsList = redisCache.getCacheList(RedisConstants.PROD_EVENT + productId);
-
+            //筛选当前事件的产品事件
             ProdEventParams prodEventParams = prodEventParamsList.stream().filter(item -> event.equals(item.getProdEvent().getEventIdentify())).findAny().get();
+
+            //推送实时日志
+            realTimeLogHandler.sendLog(prodEventParams.getProdEvent(), deviceData);
 
             List<EventParam> eventParamList = prodEventParams.getEventParamList();
 
@@ -90,10 +91,10 @@ public class RuleHandler {
                         List<RuleCondition> ruleConditions = ruleVo.getRuleConditions();
 
                         for (RuleCondition ruleCondition : ruleConditions) {
-
+                            //通过规则设置的字段取设备数据中的值
                             Object value = data.get(ruleCondition.getParam());
 
-                            if (null != value){
+                            if (null != value) {
 
                                 flags.add(rule(ruleCondition, value));
 
@@ -104,9 +105,9 @@ public class RuleHandler {
                         //是否满足条件、执行动作
                         boolean actionFlag = false;
 
-                        if (!Objects.isNull(ruleVo.getTriggering())){
+                        if (!Objects.isNull(ruleVo.getTriggering())) {
 
-                            switch (ruleVo.getTriggering()){
+                            switch (ruleVo.getTriggering()) {
 
                                 case RuleEnum.ALL:
                                     actionFlag = flags.stream().allMatch(s -> s.equals(true));
@@ -120,23 +121,18 @@ public class RuleHandler {
 
                         }
 
-                        if (actionFlag){
+                        if (actionFlag) {
 
                             List<ActionVo> actionVos = ruleVo.getActionVos();
 
-                            if (!CollectionUtils.isEmpty(actionVos)){
+                            if (!CollectionUtils.isEmpty(actionVos)) {
                                 actionHandler.action(actionVos, deviceData);
                             }
-
                         }
-
                     }
-
                 });
-
             }
         }
-
     }
 
     public boolean rule(RuleCondition ruleCondition, Object value) {
@@ -172,7 +168,7 @@ public class RuleHandler {
                     flag = compareTo > 0;
                     break;
                 case GE:
-                    flag = compareTo > 0 || compareTo == 0 ;
+                    flag = compareTo > 0 || compareTo == 0;
                     break;
                 case EQ:
                     flag = compareTo == 0;
@@ -199,7 +195,7 @@ public class RuleHandler {
         return flag;
     }
 
-    public static boolean isNumeric(String str){
+    public static boolean isNumeric(String str) {
 
         Pattern pattern = Pattern.compile("[0-9]*\\.?[0-9]+");
         Matcher isNum = pattern.matcher(str);

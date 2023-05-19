@@ -6,6 +6,7 @@ import com.things.common.constant.RedisConstants;
 import com.things.common.constant.TopicConstants;
 import com.things.common.core.redis.RedisCache;
 import com.things.common.utils.StringUtils;
+import com.things.device.bean.RealTimeLogHandler;
 import com.things.device.domain.Device;
 import com.things.device.domain.SubDevice;
 import com.things.device.service.IDeviceService;
@@ -17,6 +18,7 @@ import com.things.product.domain.Product;
 import com.things.product.domain.vo.ProductParams;
 import com.things.protocol.domain.Protocol;
 import com.things.protocol.utils.ProtocolManage;
+import com.things.sse.RealTimeLogServer;
 import com.things.tcp.handler.NettyMessageHandler;
 import com.things.utils.ByteUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +29,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -55,6 +58,9 @@ public class DeviceMessageHandler implements NettyMessageHandler {
 
     @Autowired
     private MqttGateway mqttGateway;
+
+    @Autowired
+    private RealTimeLogHandler realTimeLogHandler;
 
     @Autowired
     @Qualifier("deviceExecutor")
@@ -165,6 +171,7 @@ public class DeviceMessageHandler implements NettyMessageHandler {
             deviceData.setDeviceId(device.getDeviceId());
             deviceData.setProductId(device.getProductId().toString());
             deviceData.setDeviceName(device.getDeviceName());
+            deviceData.setTime(LocalDateTime.now());
             deviceDataList.add(deviceData);
             //插入influxDB
             influxDbService.insertDeviceData(deviceData);
@@ -201,7 +208,7 @@ public class DeviceMessageHandler implements NettyMessageHandler {
                     deviceData.setDeviceName(subDevice.getDeviceName());
                     deviceData.setProductId(String.valueOf(subDevice.getProductId()));
                     deviceData.setData(item.toString());
-
+                    deviceData.setTime(LocalDateTime.now());
                     deviceDataList.add(deviceData);
 
                     //插入influxDB
