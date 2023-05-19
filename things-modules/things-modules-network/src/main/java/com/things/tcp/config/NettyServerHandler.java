@@ -165,8 +165,8 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
         }
     }
 
-    public static ChannelHandlerContext getChannelHandlerContext(String url) {
-        return channelMap.get(url);
+    public static ChannelHandlerContext getChannelHandlerContext(String key) {
+        return channelMap.get(key);
     }
 
 }
