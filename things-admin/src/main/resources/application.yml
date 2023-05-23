@@ -18,7 +18,7 @@ ruoyi:
 # 开发环境配置
 server:
   # 服务器的HTTP端口，默认为8080
-  port: 9001
+  port: 8080
   servlet:
     # 应用的访问路径
     context-path: /
@@ -87,7 +87,7 @@ mybatis-plus:
     cache-enabled: true #开启二级缓存
     lazy-loading-enabled: true #设置为true为打开延迟加载 实体类必须加上这个注解@JsonIgnoreProperties(value = {"handler"}) 否则将会报com.fasterxml.jackson.databind.exc.InvalidDefinitionException错误
     aggressive-lazy-loading: false #将积极加载改为消极加载，即延迟加载
-    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl #不打印SQL日志
+#    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl #不打印SQL日志
 
 # PageHelper分页插件
 pagehelper: 

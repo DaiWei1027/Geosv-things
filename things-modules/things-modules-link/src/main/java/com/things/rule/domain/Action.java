@@ -16,9 +16,9 @@ import lombok.Data;
 public class Action {
 
     @TableId(type = IdType.AUTO)
-    int id;
+    Integer id;
 
-    int ruleId;
+    Integer ruleId;
 
     @ApiModelProperty(value = "类型",notes = "告警、推送、转发、短信")
     String type;

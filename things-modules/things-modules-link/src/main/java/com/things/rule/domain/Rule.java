@@ -18,7 +18,7 @@ import javax.validation.constraints.NotBlank;
 public class Rule extends BaseDomain {
 
     @TableId(type = IdType.AUTO)
-    int id;
+    Integer id;
 
     @NotBlank(message="规则名称不能为空")
     @ApiModelProperty(name = "规则名称",required = true)
@@ -39,5 +39,5 @@ public class Rule extends BaseDomain {
 
     @NotBlank(message="产品ID不能为空")
     @ApiModelProperty(name = "产品ID",required = true)
-    int productId;
+    Integer productId;
 }

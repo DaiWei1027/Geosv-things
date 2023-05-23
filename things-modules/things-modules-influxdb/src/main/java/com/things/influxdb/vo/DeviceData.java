@@ -8,6 +8,11 @@ import org.influxdb.annotation.TimeColumn;
 
 import java.time.LocalDateTime;
 
+/**
+ * 设备历史数据
+ *
+ * @author Administrator
+ */
 @Data
 @Measurement(name = "device_log")
 public class DeviceData {
@@ -21,7 +26,7 @@ public class DeviceData {
     @Column(name = "product_id", tag = true)
     private String productId;
 
-    @Column(name = "device_name", tag = true)
+    @Column(name = "device_name")
     private String deviceName;
 
     @Column(name = "data")

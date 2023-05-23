@@ -43,4 +43,6 @@ public class DeviceConstants {
 
     public static final String TCP = "TCP";
     public static final String MQTT = "MQTT";
+
+    public static final String MODBUS = "MODBUS";
 }

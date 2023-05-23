@@ -31,6 +31,7 @@ public class InfluxDbServiceImpl implements IInfluxDbService {
         Map<String, Object> fields = Maps.newHashMap();
 
         tags.put("device_id", deviceData.getDeviceId());
+        tags.put("device_name", deviceData.getDeviceName());
         fields.put("product_id", deviceData.getProductId());
         fields.put("data", deviceData.getData());
 

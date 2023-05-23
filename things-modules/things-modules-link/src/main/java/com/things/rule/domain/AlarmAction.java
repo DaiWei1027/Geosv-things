@@ -12,9 +12,9 @@ import lombok.Data;
 public class AlarmAction {
 
     @TableId(type = IdType.AUTO)
-    int id;
+    Integer id;
 
-    int actionId;
+    Integer actionId;
 
     String title;
 

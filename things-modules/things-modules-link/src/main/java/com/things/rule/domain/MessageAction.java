@@ -12,8 +12,8 @@ import lombok.Data;
 public class MessageAction {
 
     @TableId(type = IdType.AUTO)
-    int id;
+    Integer id;
 
-    int actionId;
+    Integer actionId;
 
 }

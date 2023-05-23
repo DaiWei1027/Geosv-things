@@ -14,7 +14,7 @@ import lombok.Data;
 public class Protocol {
 
     @TableId(type = IdType.AUTO)
-    int id;
+    Integer id;
 
     @ApiModelProperty(name = "协议名称")
     String protocolName;

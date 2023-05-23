@@ -80,7 +80,7 @@ public class EventParamController extends BaseController {
         prodEventParams.setProdEvent(prodEvent);
         prodEventParams.setEventParamList(eventParamList);
 
-        redisCache.rightPush(RedisConstants.PRODUCT + prodEvent.getProductId(), prodEventParams);
+        redisCache.rightPush(RedisConstants.PROD_EVENT + prodEvent.getProductId(), prodEventParams);
 
     }
 }

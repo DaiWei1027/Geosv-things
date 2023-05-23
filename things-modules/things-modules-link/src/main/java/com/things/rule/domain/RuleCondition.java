@@ -15,10 +15,10 @@ import lombok.Data;
 public class RuleCondition {
 
     @TableId(type = IdType.AUTO)
-    int id;
+    Integer id;
 
     @ApiModelProperty
-    int ruleId;
+    Integer ruleId;
 
     /**
      * 设备数据中某个参数的名称

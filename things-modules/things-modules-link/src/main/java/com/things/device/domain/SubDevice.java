@@ -16,7 +16,7 @@ import lombok.Data;
 public class SubDevice extends BaseDomain {
 
     @TableId(type = IdType.AUTO)
-    int id;
+    Integer id;
 
     /**
      * 边设备唯一标识

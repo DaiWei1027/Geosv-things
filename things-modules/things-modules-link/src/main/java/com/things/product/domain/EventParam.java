@@ -16,10 +16,10 @@ import lombok.Data;
 public class EventParam extends BaseDomain {
 
     @TableId(type = IdType.AUTO)
-    int id;
+    Integer id;
 
     @ApiModelProperty(name = "产品id",required = true)
-    int eventId;
+    Integer eventId;
 
     @ApiModelProperty(name = "参数名称",required = true)
     String paramName;

@@ -14,7 +14,7 @@ import lombok.Data;
 public class Device extends BaseDomain {
 
     @TableId(type = IdType.AUTO)
-    int id;
+    Integer id;
 
     @ApiModelProperty("设备唯一标识")
     String deviceId;
