@@ -54,6 +54,12 @@ public class SysJob extends BaseEntity
     @Excel(name = "任务状态", readConverterExp = "0=正常,1=暂停")
     private String status;
 
+    private Integer productId;
+
+    private String command;
+
+    private String productName;
+
     public Long getJobId()
     {
         return jobId;
@@ -150,6 +156,30 @@ public class SysJob extends BaseEntity
         this.status = status;
     }
 
+    public Integer getProductId() {
+        return productId;
+    }
+
+    public void setProductId(Integer productId) {
+        this.productId = productId;
+    }
+
+    public String getCommand() {
+        return command;
+    }
+
+    public void setCommand(String command) {
+        this.command = command;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
@@ -166,6 +196,9 @@ public class SysJob extends BaseEntity
             .append("updateBy", getUpdateBy())
             .append("updateTime", getUpdateTime())
             .append("remark", getRemark())
+            .append("productId", getProductId())
+            .append("command", getCommand())
+            .append("productName", getProductName())
             .toString();
     }
 }

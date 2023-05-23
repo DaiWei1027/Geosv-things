@@ -82,7 +82,14 @@ public class SysJobController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody SysJob job) throws SchedulerException, TaskException
     {
-        if (!CronUtils.isValid(job.getCronExpression()))
+
+        String invokeTarget = "harvester.execute('"+job.getProductId()+"','"+job.getCommand()+"')";
+        job.setInvokeTarget(invokeTarget);
+        if (jobService.countByProductId(job.getProductId(),job.getCommand()) > 0)
+        {
+            return error("产品：["+job.getProductName()+"],指令："+job.getCommand() +"已存在，请勿重复添加");
+        }
+        else if (!CronUtils.isValid(job.getCronExpression()))
         {
             return error("新增任务'" + job.getJobName() + "'失败，Cron表达式不正确");
         }
@@ -106,6 +113,7 @@ public class SysJobController extends BaseController
         {
             return error("新增任务'" + job.getJobName() + "'失败，目标字符串不在白名单内");
         }
+
         job.setCreateBy(getUsername());
         return toAjax(jobService.insertJob(job));
     }
@@ -118,7 +126,13 @@ public class SysJobController extends BaseController
     @PutMapping
     public AjaxResult edit(@RequestBody SysJob job) throws SchedulerException, TaskException
     {
-        if (!CronUtils.isValid(job.getCronExpression()))
+        String invokeTarget = "harvester.execute('"+job.getProductId()+"','"+job.getCommand()+"')";
+        job.setInvokeTarget(invokeTarget);
+        if (jobService.countByProductId(job.getProductId(),job.getCommand()) > 0)
+        {
+            return error("产品：["+job.getProductName()+"],指令："+job.getCommand() +"已存在，请勿重复添加");
+        }
+        else if (!CronUtils.isValid(job.getCronExpression()))
         {
             return error("修改任务'" + job.getJobName() + "'失败，Cron表达式不正确");
         }
@@ -142,6 +156,7 @@ public class SysJobController extends BaseController
         {
             return error("修改任务'" + job.getJobName() + "'失败，目标字符串不在白名单内");
         }
+
         job.setUpdateBy(getUsername());
         return toAjax(jobService.updateJob(job));
     }

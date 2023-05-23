@@ -41,6 +41,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 				AND invoke_target like concat('%', #{invokeTarget}, '%')
 			</if>
 		</where>
+		order by create_time DESC
 	</select>
 	
 	<select id="selectJobAll" resultMap="SysJobResult">
@@ -75,7 +76,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  			<if test="status !=null">status = #{status},</if>
  			<if test="remark != null and remark != ''">remark = #{remark},</if>
  			<if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
- 			update_time = sysdate()
+ 			update_time = sysdate(),product_id = #{productId},command = #{command}
  		</set>
  		where job_id = #{jobId}
 	</update>
@@ -92,7 +93,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  			<if test="status != null and status != ''">status,</if>
  			<if test="remark != null and remark != ''">remark,</if>
  			<if test="createBy != null and createBy != ''">create_by,</if>
- 			create_time
+ 			create_time,
+			product_id,
+ 		    command
  		)values(
  			<if test="jobId != null and jobId != 0">#{jobId},</if>
  			<if test="jobName != null and jobName != ''">#{jobName},</if>
@@ -104,7 +107,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  			<if test="status != null and status != ''">#{status},</if>
  			<if test="remark != null and remark != ''">#{remark},</if>
  			<if test="createBy != null and createBy != ''">#{createBy},</if>
- 			sysdate()
+ 			sysdate(),#{productId},#{command}
  		)
 	</insert>
 

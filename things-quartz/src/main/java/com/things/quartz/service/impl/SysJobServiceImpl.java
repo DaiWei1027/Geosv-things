@@ -2,6 +2,9 @@ package com.things.quartz.service.impl;
 
 import java.util.List;
 import javax.annotation.PostConstruct;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.quartz.JobDataMap;
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
@@ -23,7 +26,7 @@ import com.things.quartz.util.ScheduleUtils;
  * @author ruoyi
  */
 @Service
-public class SysJobServiceImpl implements ISysJobService
+public class SysJobServiceImpl extends ServiceImpl<SysJobMapper,SysJob>implements ISysJobService
 {
     @Autowired
     private Scheduler scheduler;
@@ -245,6 +248,13 @@ public class SysJobServiceImpl implements ISysJobService
             scheduler.deleteJob(jobKey);
         }
         ScheduleUtils.createScheduleJob(scheduler, job);
+    }
+
+    @Override
+    public int countByProductId(Integer productId, String command) {
+        return jobMapper.selectCount(new LambdaQueryWrapper<SysJob>().eq(SysJob::getProductId,productId)
+                .eq(SysJob::getCommand,command)
+        );
     }
 
     /**
