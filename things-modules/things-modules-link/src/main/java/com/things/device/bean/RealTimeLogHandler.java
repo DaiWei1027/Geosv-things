@@ -1,5 +1,6 @@
 package com.things.device.bean;
 
+import cn.hutool.core.date.DateUtil;
 import com.things.influxdb.vo.DeviceData;
 import com.things.product.domain.ProdEvent;
 import com.things.sse.RealTimeLogServer;
@@ -17,9 +18,9 @@ public class RealTimeLogHandler {
 
         if (RealTimeLogServer.getUserCount() > 0) {
 
-            String log = deviceData.getTime().toString();
+            String log = DateUtil.format(deviceData.getTime(),"yyyy-MM-dd HH:mm:ss");
 
-            log += ": 设备ID：" + deviceData.getDeviceId();
+            log += " - 设备ID：" + deviceData.getDeviceId();
 
             log += "，设备名称：" + deviceData.getDeviceName();
 
