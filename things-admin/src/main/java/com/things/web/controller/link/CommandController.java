@@ -26,8 +26,6 @@ public class CommandController {
 
     private final IDeviceService deviceService;
 
-    private final RedisCache redisCache;
-
     private final CommandExecute commandExecute;
 
 
