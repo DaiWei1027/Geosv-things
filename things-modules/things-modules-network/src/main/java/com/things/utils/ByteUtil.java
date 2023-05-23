@@ -24,6 +24,20 @@ public class ByteUtil {
 
     }
 
+    public static int[] hexString2Ints(String src){
+        int l = src.length() / 2;
+
+        int[] ret = new int[l];
+
+        for (int i = 0; i < l; i++) {
+
+            ret[i] = Integer.valueOf(src.substring(i * 2, i * 2 + 2), 16);
+
+        }
+
+        return ret;
+    }
+
     /**
      * @param b 字节数组
      * @return 16进制字符串
