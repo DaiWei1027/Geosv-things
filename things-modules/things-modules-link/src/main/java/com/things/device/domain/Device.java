@@ -16,28 +16,28 @@ public class Device extends BaseDomain {
     @TableId(type = IdType.AUTO)
     Integer id;
 
-    @ApiModelProperty("设备唯一标识")
+    @ApiModelProperty(value = "设备唯一标识",required = true)
     String deviceId;
 
-    @ApiModelProperty("设备名称")
+    @ApiModelProperty(value = "设备名称",required = true)
     String deviceName;
 
     @ApiModelProperty("所在位置")
     String location;
 
-    @ApiModelProperty("设备类型 直连设备 device | 网关设备 gateway")
+    @ApiModelProperty(value = "设备类型",notes = "直连设备 device | 网关设备 gateway",required = true)
     String deviceType;
 
-    @ApiModelProperty(value = "协议类型",notes = "如mqtt、modbus")
+    @ApiModelProperty(value = "协议类型",notes = "如MQTT、MODBUS、JSON",required = true)
     String ruleType;
 
-    @ApiModelProperty("产品id")
+    @ApiModelProperty(value = "产品id",required = true)
     Integer productId;
 
-    @ApiModelProperty("状态")
+    @ApiModelProperty(value = "状态",notes = "启用：0 禁用：1",required = true)
     String status;
 
-    @ApiModelProperty("连接类型")
+    @ApiModelProperty(value = "连接类型",notes = "MQTT,TCP",required = true)
     String connectionType;
 
     @ApiModelProperty("连接状态")
