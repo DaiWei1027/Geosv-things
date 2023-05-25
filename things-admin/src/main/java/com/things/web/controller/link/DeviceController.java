@@ -14,6 +14,7 @@ import com.things.device.service.IDeviceService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -32,6 +33,7 @@ public class DeviceController extends BaseController {
 
     @ApiOperation("新增")
     @PostMapping("/insert")
+    @PreAuthorize("@ss.hasPermi('system:dept:list')")
     public AjaxResult insert(@RequestBody Device device) {
         device.setCreateBy(getUsername());
         return deviceService.insert(device);
@@ -39,6 +41,7 @@ public class DeviceController extends BaseController {
 
     @ApiOperation("更新")
     @PostMapping("/update")
+    @PreAuthorize("@ss.hasPermi('system:dept:list')")
     public AjaxResult update(@RequestBody Device device) {
 
         Device deviceById = deviceService.getById(device.getId());
@@ -58,6 +61,7 @@ public class DeviceController extends BaseController {
 
     @ApiOperation("启用|停用")
     @GetMapping("/status")
+    @PreAuthorize("@ss.hasPermi('system:dept:list')")
     public AjaxResult status(Integer id, String status) {
         Device device = deviceService.getById(id);
         device.setStatus(status);
@@ -67,6 +71,7 @@ public class DeviceController extends BaseController {
 
     @ApiOperation("分页查询")
     @PostMapping("/page")
+    @PreAuthorize("@ss.hasPermi('system:dept:list')")
     public AjaxResult page(@RequestBody DeviceVo deviceVo) {
 
         Page<Device> page = new Page<>(deviceVo.getPageNum(), deviceVo.getPageSize());
@@ -82,12 +87,15 @@ public class DeviceController extends BaseController {
         return AjaxResult.success(pageData);
     }
 
-    @ApiOperation("在线离线")
+    @ApiOperation("在线离线统计")
     @PostMapping("/onlineCount")
+    @PreAuthorize("@ss.hasPermi('system:dept:list')")
     public AjaxResult onlineCount(){
 
         OnlineCount onlineCount = deviceService.onlineCount();
 
         return AjaxResult.success(onlineCount);
     }
+
+
 }
