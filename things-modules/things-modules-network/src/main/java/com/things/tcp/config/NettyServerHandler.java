@@ -47,8 +47,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
         //区分客户端请求的那个端口
         String serverPort = ctx.channel().localAddress().toString();
         String requestPort = serverPort.substring(serverPort.length() - 4);
-        log.info("[{}]向[{}]端口写入数据:[{}]", url, requestPort, payload);
-        log.info("当前活跃线程数{}", threadPool.getActiveCount());
+        log.debug("[{}]向[{}]端口写入数据:[{}]", url, requestPort, payload);
 
         if (payload.toString().startsWith(HEART_BEAT)) {
             //心跳包处理
