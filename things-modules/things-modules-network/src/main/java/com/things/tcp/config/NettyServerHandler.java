@@ -75,7 +75,6 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
 
     }
 
-
     /**
      * channel异常处理
      *
@@ -113,6 +112,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
         String deviceId = heartBeat.substring(heartBeat.lastIndexOf("=") + 1);
         if (!channelMap.containsKey(deviceId)) {
             channelMap.put(deviceId,ctx);
+            channelWrite(ctx,msg.toString());
         }
         SpringUtil.getBean(TCPDeviceOnlineStatus.class).online(deviceId);
         log.info("收到设备[{}]心跳", deviceId);
