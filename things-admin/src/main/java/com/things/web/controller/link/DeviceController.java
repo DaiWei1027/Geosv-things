@@ -1,9 +1,7 @@
 package com.things.web.controller.link;
 
-import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.things.common.constant.DeviceConstants;
 import com.things.common.core.controller.BaseController;
 import com.things.common.core.domain.AjaxResult;
 import com.things.common.utils.StringUtils;
@@ -20,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Date;
 
 /**
+ * 设备管理
+ *
  * @author DaiWei
  * @date 2023/04/03 15:20
  **/

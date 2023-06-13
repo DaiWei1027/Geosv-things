@@ -3,6 +3,7 @@ package com.things.product.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.things.common.constant.RedisConstants;
+import com.things.common.core.domain.AjaxResult;
 import com.things.common.core.redis.RedisCache;
 import com.things.product.domain.EventParam;
 import com.things.product.domain.ProdEvent;
@@ -12,6 +13,7 @@ import com.things.product.mapper.ProdEventMapper;
 import com.things.product.service.IProdEventService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.utils.Lists;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -37,18 +39,54 @@ public class ProdEventServiceImpl extends ServiceImpl<ProdEventMapper, ProdEvent
 
         List<ProdEvent> prodEvents = prodEventMapper.selectList(new LambdaQueryWrapper<>());
         prodEvents.stream().map(ProdEvent::getProductId).distinct().forEach(productId->redisCache.deleteObject(RedisConstants.PROD_EVENT + productId.toString()));
-        prodEvents.forEach(prodEvent -> {
+        prodEvents.forEach(this::cache);
 
-            List<EventParam> eventParamList = eventParamMapper.selectList(new LambdaQueryWrapper<EventParam>().eq(EventParam::getEventId, prodEvent.getId()));
+    }
 
-            ProdEventParams prodEventParams = new ProdEventParams();
+    @Override
+    public AjaxResult insert(ProdEvent prodEvent) {
 
-            prodEventParams.setProdEvent(prodEvent);
-            prodEventParams.setEventParamList(eventParamList);
+        if (countByEventName(prodEvent.getEventName()) > 0){
+            return AjaxResult.error("添加失败，事件:"+prodEvent.getEventName()+"已存在！");
+        }
+        prodEventMapper.insert(prodEvent);
+        cache(prodEvent);
+        return AjaxResult.success();
+    }
 
-            redisCache.rightPush(RedisConstants.PROD_EVENT + prodEvent.getProductId(), prodEventParams);
+    @Override
+    public AjaxResult update(ProdEvent prodEvent) {
+        ProdEvent query = prodEventMapper.selectById(prodEvent);
+        if (!query.getEventName().equals(prodEvent.getEventName()) && countByEventName(prodEvent.getEventName()) > 0){
+            return AjaxResult.error("添加失败，修改后的事件名称："+prodEvent.getEventName()+"已存在");
+        }
+        prodEventMapper.updateById(prodEvent);
+        cache(prodEvent);
+        return AjaxResult.success();
+    }
 
-        });
+    @Override
+    public AjaxResult delete(Integer id) {
+        ProdEvent prodEvent = prodEventMapper.selectById(id);
+        redisCache.deleteObject(RedisConstants.PROD_EVENT + prodEvent.getProductId());
+        prodEventMapper.deleteById(id);
+        return AjaxResult.success();
+    }
+
+    public int countByEventName(String eventName){
+        return prodEventMapper.selectCount(new LambdaQueryWrapper<ProdEvent>().eq(ProdEvent::getEventName, eventName));
+    }
+
+    public void cache(ProdEvent prodEvent){
+
+        ProdEventParams prodEventParams = new ProdEventParams();
+
+        List<EventParam> eventParamList = eventParamMapper.selectList(new LambdaQueryWrapper<EventParam>().eq(EventParam::getEventId, prodEvent.getId()));
+
+        prodEventParams.setProdEvent(prodEvent);
+        prodEventParams.setEventParamList(eventParamList);
+
+        redisCache.rightPush(RedisConstants.PROD_EVENT + prodEvent.getProductId(), prodEventParams);
 
     }
 }

@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
  * @author DaiWei
  * @date 2023/04/03 15:20
  **/
-@Api(tags = "设备管理")
+@Api(tags = "子设备管理")
 @RestController
 @RequestMapping("/link/SubDevice")
 public class SubDeviceController extends BaseController {

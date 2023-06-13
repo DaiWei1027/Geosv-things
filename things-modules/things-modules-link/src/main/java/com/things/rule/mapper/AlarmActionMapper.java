@@ -1,8 +1,7 @@
 package com.things.rule.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.things.rule.domain.Action;
-import com.things.rule.domain.AlarmAction;
+import com.things.rule.domain.action.AlarmAction;
 
 /**
  * @author DaiWei

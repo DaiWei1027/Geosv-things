@@ -1,6 +1,5 @@
 package com.things.device.message.execute;
 
-import com.alibaba.fastjson2.JSONObject;
 import com.things.common.constant.DeviceConstants;
 import com.things.common.constant.RedisConstants;
 import com.things.common.constant.TopicConstants;
@@ -10,9 +9,7 @@ import com.things.mqtt.mqtt.MqttGateway;
 import com.things.product.domain.Product;
 import com.things.protocol.domain.Protocol;
 import com.things.tcp.config.NettyServerHandler;
-import com.things.tcp.handler.NettyMessageHandler;
 import com.things.utils.ByteUtil;
-import com.things.utils.ConnectionUtil;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +31,7 @@ public class CommandExecute {
     private final MqttGateway mqttGateway;
 
     private final RedisCache redisCache;
+
 
     public void execute(Device device, String command) {
 
@@ -82,7 +80,7 @@ public class CommandExecute {
         ChannelHandlerContext ctx = NettyServerHandler.getChannelHandlerContext(device.getDeviceId());
 
         if (Objects.isNull(ctx)) {
-            throw new RuntimeException("设备不存在，或已离线");
+            throw new RuntimeException("设备[" + device.getDeviceId() + "]不存在，或已离线");
         }
 
         NettyServerHandler.channelWrite(ctx, command);

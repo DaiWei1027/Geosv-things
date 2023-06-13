@@ -2,6 +2,7 @@ package com.things.device.domain.vo;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.things.common.core.domain.BaseDomain;
 import com.things.framework.param.Pagination;
 import io.swagger.annotations.ApiModelProperty;
@@ -35,8 +36,10 @@ public class DeviceVo extends Pagination {
     @ApiModelProperty("连接状态")
     String connectionStatus;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     Date startTime;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     Date endTime;
 
 }

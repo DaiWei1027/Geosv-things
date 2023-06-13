@@ -15,10 +15,8 @@ import com.things.influxdb.service.IInfluxDbService;
 import com.things.influxdb.vo.DeviceData;
 import com.things.mqtt.mqtt.MqttGateway;
 import com.things.product.domain.Product;
-import com.things.product.domain.vo.ProductParams;
 import com.things.protocol.domain.Protocol;
 import com.things.protocol.utils.ProtocolManage;
-import com.things.sse.RealTimeLogServer;
 import com.things.tcp.handler.NettyMessageHandler;
 import com.things.utils.ByteUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -60,7 +58,7 @@ public class DeviceMessageHandler implements NettyMessageHandler {
     private MqttGateway mqttGateway;
 
     @Autowired
-    private RealTimeLogHandler realTimeLogHandler;
+    private RealTimeLogHandler logHandler;
 
     @Autowired
     @Qualifier("deviceExecutor")
@@ -71,14 +69,14 @@ public class DeviceMessageHandler implements NettyMessageHandler {
         final Product product = redisCache.getCacheObject(RedisConstants.PRODUCT + productId);
 
         if (Objects.isNull(product)) {
-            log.info("设备消息处理器：查询产品信息为空为空，产品ID[{}]，设备编号[{}]", productId, deviceId);
+            log.info("设备消息处理器：查询产品信息为空为空，产品ID[{}]，设备编号[{}]，或产品已停用", productId, deviceId);
             return;
         }
 
         final Protocol protocol = redisCache.getCacheObject(RedisConstants.PROTOCOL + product.getProtocolId());
 
         if (Objects.isNull(protocol)) {
-            log.info("设备消息处理器：查询协议为空，产品ID[{}]，设备编号[{}]", productId, deviceId);
+            log.info("设备消息处理器：查询协议为空，产品ID[{}]，设备编号[{}]，或协议已停用", productId, deviceId);
             return;
         }
 
@@ -89,6 +87,8 @@ public class DeviceMessageHandler implements NettyMessageHandler {
         if (!Objects.isNull(device) && DeviceConstants.ENABLE.equals(device.getStatus())) {
 
             deviceExecutor.execute(() -> {
+                //推送日志
+                logHandler.send(device,data);
 
                 //动态协议解析数据
                 List<JSONObject> deviceJson;
@@ -97,7 +97,8 @@ public class DeviceMessageHandler implements NettyMessageHandler {
                     deviceJson = protocolManage.load(protocol.getId(), data);
 
                 } catch (Exception e) {
-                    log.error("设备消息处理器，协议解析消息错误：{}", e.getMessage());
+                    log.error("设备消息处理器，协议解析消息错误：{}，data:{}", e.getMessage(),data);
+                    logHandler.fail(e.getMessage());
                     return;
                 }
 

@@ -3,5 +3,14 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.things.product.mapper.ProductMapper">
-    
+
+    <select id="countNumber" resultType="com.things.product.domain.vo.ProductCount">
+
+        select
+            COUNT(1) AS totalNum,
+            SUM(case when status = 0 THEN 1 ELSE 0 END) as enableNum,
+            SUM(case when status = 1 THEN 1 ELSE 0 END) as disableNum
+        from product
+
+    </select>
 </mapper>

@@ -5,6 +5,8 @@ import com.things.common.core.domain.AjaxResult;
 import com.things.device.domain.Device;
 import com.things.device.domain.SubDevice;
 
+import java.util.List;
+
 /**
  * @author DaiWei
  * @date 2023/03/31 13:10
@@ -27,4 +29,12 @@ public interface ISubDeviceService extends IService<SubDevice> {
      * @return SubDevice
      */
     SubDevice getSubDevice(String deviceNo, int gatewayId);
+
+    /**
+     * 通过gatewayId查询
+     *
+     * @param gatewayId 网关id
+     * @return List<SubDevice>
+     */
+    List<SubDevice> listByGatewayId(int gatewayId);
 }

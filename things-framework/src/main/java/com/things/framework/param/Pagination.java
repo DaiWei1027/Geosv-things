@@ -13,11 +13,11 @@ public class Pagination {
      * 页码
      */
     @ApiModelProperty("页码")
-    int pageNum = 1;
+    int pageNum;
 
     /**
      * 页数
      */
     @ApiModelProperty("页大小")
-    int pageSize = 10;
+    int pageSize;
 }

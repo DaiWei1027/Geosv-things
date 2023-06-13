@@ -9,15 +9,13 @@ import com.things.influxdb.service.IInfluxDbService;
 import com.things.influxdb.vo.DeviceAlarm;
 import com.things.influxdb.vo.DeviceData;
 import com.things.product.domain.Product;
-import com.things.product.domain.vo.ProductParams;
-import com.things.rule.domain.AlarmAction;
+import com.things.rule.domain.action.AlarmAction;
 import com.things.rule.domain.vo.ActionVo;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 /**
  * @author DaiWei
@@ -38,9 +36,7 @@ public class AlarmActionExec {
 
         Device device = deviceService.selectByDeviceId(deviceData.getDeviceId());
 
-        ProductParams productParams = redisCache.getCacheObject(RedisConstants.PRODUCT + deviceData.getProductId());
-
-        Product product = productParams.getProduct();
+        Product product = redisCache.getCacheObject(RedisConstants.PRODUCT + deviceData.getProductId());
 
         DeviceAlarm deviceAlarm = new DeviceAlarm();
 

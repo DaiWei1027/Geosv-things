@@ -1,11 +1,8 @@
 package com.things.rule.domain.vo;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.things.rule.domain.Action;
-import com.things.rule.domain.AlarmAction;
-import com.things.rule.domain.MessageAction;
-import io.swagger.annotations.ApiModelProperty;
+import com.things.rule.domain.action.AlarmAction;
+import com.things.rule.domain.action.MessageAction;
 import lombok.Data;
 
 /**

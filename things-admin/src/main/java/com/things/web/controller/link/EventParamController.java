@@ -21,6 +21,8 @@ import java.util.Date;
 import java.util.List;
 
 /**
+ * 产品参数
+ *
  * @author DaiWei
  * @date 2023/05/09 09:28
  **/
@@ -59,7 +61,7 @@ public class EventParamController extends BaseController {
 
 
     @ApiOperation("查询事件所有参数")
-    @PostMapping("/listByProductId/{eventId}")
+    @PostMapping("/listByEventId/{eventId}")
     @PreAuthorize("@ss.hasPermi('system:config:list')")
     public AjaxResult listByEventId(@PathVariable Integer eventId) {
 

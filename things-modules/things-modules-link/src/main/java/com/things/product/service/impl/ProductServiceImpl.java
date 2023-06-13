@@ -6,6 +6,7 @@ import com.things.common.constant.RedisConstants;
 import com.things.common.core.redis.RedisCache;
 import com.things.product.domain.Product;
 import com.things.product.domain.EventParam;
+import com.things.product.domain.vo.ProductCount;
 import com.things.product.domain.vo.ProductParams;
 import com.things.product.mapper.ProductMapper;
 import com.things.product.mapper.EventParamMapper;
@@ -43,4 +44,9 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
         log.info("产品管理：更新产品信息成功：[{}]条", products.size());
     }
 
+    @Override
+    public ProductCount countNumber() {
+
+        return productMapper.countNumber();
+    }
 }

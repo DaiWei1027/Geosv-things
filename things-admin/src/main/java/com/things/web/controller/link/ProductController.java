@@ -6,7 +6,9 @@ import com.things.common.constant.RedisConstants;
 import com.things.common.core.controller.BaseController;
 import com.things.common.core.domain.AjaxResult;
 import com.things.common.core.redis.RedisCache;
+import com.things.common.enums.DeviceStatus;
 import com.things.common.utils.StringUtils;
+import com.things.device.domain.Device;
 import com.things.product.domain.Product;
 import com.things.product.domain.vo.ProductParams;
 import com.things.product.service.IProductService;
@@ -20,6 +22,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Date;
 
 /**
+ * 产品管理
+ *
  * @author DaiWei
  * @date 2023/04/03 14:41
  **/
@@ -42,7 +46,7 @@ public class ProductController extends BaseController {
         productService.save(product);
         ProductParams productParams = new ProductParams();
         productParams.setProduct(product);
-        redisCache.setCacheObject(RedisConstants.PRODUCT + product.getId(),productParams);
+        redisCache.setCacheObject(RedisConstants.PRODUCT + product.getId(), productParams);
         return AjaxResult.success();
     }
 
@@ -52,10 +56,25 @@ public class ProductController extends BaseController {
     public AjaxResult update(@RequestBody Product product) {
         product.setUpdateBy(getUsername());
         product.setUpdateTime(new Date());
-        ProductParams productParams = new ProductParams();
-        productParams.setProduct(product);
-        redisCache.setCacheObject(RedisConstants.PRODUCT + product.getId(),productParams);
+        redisCache.setCacheObject(RedisConstants.PRODUCT + product.getId(), product);
         return toAjax(productService.updateById(product));
+    }
+
+    @ApiOperation("启用|停用")
+    @GetMapping("/status")
+    @PreAuthorize("@ss.hasPermi('system:dept:list')")
+    public AjaxResult status(Integer id, String status) {
+        Product product = productService.getById(id);
+        product.setStatus(status);
+        product.setUpdateBy(getUsername());
+
+        if (DeviceStatus.ENABLE.getCode().equals(status)) {
+            redisCache.setCacheObject(RedisConstants.PRODUCT + product.getId(), product);
+        } else if (DeviceStatus.DISABLE.getCode().equals(status)) {
+            redisCache.deleteObject(RedisConstants.PRODUCT + product.getId());
+        }
+
+        return AjaxResult.success(productService.updateById(product));
     }
 
     @ApiOperation("删除")
@@ -80,5 +99,17 @@ public class ProductController extends BaseController {
         return AjaxResult.success(pageData);
     }
 
+    @ApiOperation("查询全部")
+    @GetMapping("/all")
+    @PreAuthorize("@ss.hasPermi('system:config:list')")
+    public AjaxResult all() {
+        return AjaxResult.success(productService.list());
+    }
 
+    @ApiOperation("统计产品启用禁用数量")
+    @GetMapping("/count")
+    @PreAuthorize("@ss.hasPermi('system:config:list')")
+    public AjaxResult count() {
+        return AjaxResult.success(productService.countNumber());
+    }
 }

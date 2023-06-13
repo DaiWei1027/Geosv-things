@@ -68,7 +68,7 @@ public class ByteUtil {
         Double doubleByHexstr = getDoubleByHexstr("45def000");
         float v = Float.intBitsToFloat(Integer.parseInt("45def000", 16));
         System.out.println(v);
-
+        System.out.println(hexStringToString("4D455353414745203100000000000000"));
     }
 
     public static Double getDoubleByHexstr(String hexstr) {
@@ -164,4 +164,5 @@ public class ByteUtil {
         }
         return s;
     }
+
 }

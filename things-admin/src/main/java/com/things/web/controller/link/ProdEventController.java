@@ -34,8 +34,7 @@ public class ProdEventController extends BaseController {
     public AjaxResult insert(@RequestBody ProdEvent product) {
         product.setCreateBy(getUsername());
         product.setCreateTime(new Date());
-        prodEventService.save(product);
-        return AjaxResult.success();
+        return prodEventService.insert(product);
     }
 
     @ApiOperation("更新")
@@ -44,8 +43,15 @@ public class ProdEventController extends BaseController {
     public AjaxResult update(@RequestBody ProdEvent product) {
         product.setUpdateBy(getUsername());
         product.setUpdateTime(new Date());
-        prodEventService.updateById(product);
-        return AjaxResult.success();
+        return prodEventService.update(product);
+    }
+
+    @ApiOperation("删除")
+    @PostMapping("/delete/{id}")
+    @PreAuthorize("@ss.hasPermi('system:config:list')")
+    public AjaxResult delete(@PathVariable Integer id) {
+
+        return prodEventService.delete(id);
     }
 
     @ApiOperation("查询产品的所有事件")

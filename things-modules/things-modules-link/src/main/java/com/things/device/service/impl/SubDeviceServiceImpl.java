@@ -13,6 +13,8 @@ import com.things.utils.ConnectionUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * @author DaiWei
  * @date 2023/03/31 13:11
@@ -46,5 +48,10 @@ public class SubDeviceServiceImpl extends ServiceImpl<SubDeviceMapper, SubDevice
                 .eq(SubDevice::getDeviceId, deviceNo)
                 .eq(SubDevice::getGatewayId, gatewayId)
         );
+    }
+
+    @Override
+    public List<SubDevice> listByGatewayId(int gatewayId) {
+        return subDeviceMapper.selectList(new LambdaQueryWrapper<SubDevice>().eq(SubDevice::getGatewayId,gatewayId));
     }
 }

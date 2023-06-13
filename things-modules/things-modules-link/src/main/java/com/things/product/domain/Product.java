@@ -23,11 +23,14 @@ public class Product extends BaseDomain {
     @ApiModelProperty(name = "厂家")
     String manufacturer;
 
-    @ApiModelProperty(name = "数据类型",required = true)
-    String dataType;
+//    @ApiModelProperty(name = "数据类型",required = true)
+//    String dataType;
 
     @ApiModelProperty(name = "连接类型",required = true)
     String connectType;
+
+    @ApiModelProperty(name = "启动状态 0启用 1禁用",required = true)
+    String status;
 
     @ApiModelProperty(name = "协议id",required = true)
     Integer protocolId;

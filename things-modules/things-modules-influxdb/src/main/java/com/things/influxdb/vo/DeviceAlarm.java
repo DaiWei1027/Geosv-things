@@ -5,6 +5,7 @@ import lombok.Data;
 import org.influxdb.annotation.Column;
 import org.influxdb.annotation.Measurement;
 import org.influxdb.annotation.TimeColumn;
+import plus.ojbk.influxdb.annotation.Count;
 
 import java.time.LocalDateTime;
 
@@ -24,6 +25,7 @@ public class DeviceAlarm {
     @Column(name = "product_id", tag = true)
     private String productId;
 
+    @Count(value = "product_name")
     @Column(name = "product_name")
     private String productName;
 
