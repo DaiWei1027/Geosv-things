@@ -64,6 +64,10 @@ public class DeviceMessageHandler implements NettyMessageHandler {
     @Qualifier("deviceExecutor")
     private ThreadPoolTaskExecutor deviceExecutor;
 
+    @Autowired
+    @Qualifier("logExecutor")
+    private ThreadPoolTaskExecutor logExecutor;
+
     public void mqttMessage(String productId, String deviceId, Object payload) {
 
         final Product product = redisCache.getCacheObject(RedisConstants.PRODUCT + productId);
@@ -88,7 +92,7 @@ public class DeviceMessageHandler implements NettyMessageHandler {
 
             deviceExecutor.execute(() -> {
                 //推送日志
-                logHandler.send(device,data);
+                logExecutor.execute(() -> logHandler.send(device, data));
 
                 //动态协议解析数据
                 List<JSONObject> deviceJson;
@@ -97,8 +101,8 @@ public class DeviceMessageHandler implements NettyMessageHandler {
                     deviceJson = protocolManage.load(protocol.getId(), data);
 
                 } catch (Exception e) {
-                    log.error("设备消息处理器，协议解析消息错误：{}，data:{}", e.getMessage(),data);
-                    logHandler.fail(e.getMessage());
+                    log.error("设备消息处理器，协议解析消息错误：{}，data:{}", e.getMessage(), data);
+                    logExecutor.execute(() -> logHandler.fail(e.getMessage()));
                     return;
                 }
 
