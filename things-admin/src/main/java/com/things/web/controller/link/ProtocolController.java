@@ -2,6 +2,7 @@ package com.things.web.controller.link;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.things.common.constant.DeviceConstants;
 import com.things.common.core.controller.BaseController;
 import com.things.common.core.domain.AjaxResult;
 import com.things.common.groovy.GroovyPlugin;
@@ -10,15 +11,13 @@ import com.things.common.utils.StringUtils;
 import com.things.protocol.domain.Protocol;
 import com.things.protocol.domain.vo.ProtocolExecuteParam;
 import com.things.protocol.domain.vo.ProtocolParam;
+import com.things.protocol.domain.vo.ScriptParam;
 import com.things.protocol.service.IProtocolService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 协议管理
@@ -38,7 +37,7 @@ public class ProtocolController extends BaseController {
     @PostMapping("/insert")
     @PreAuthorize("@ss.hasPermi('system:config:list')")
     public AjaxResult insert(@RequestBody Protocol protocol) {
-        checkScript(protocol.getProtocolContent());
+//        checkScript(protocol.getProtocolContent());
         return toAjax(protocolService.insert(protocol));
     }
 
@@ -68,12 +67,33 @@ public class ProtocolController extends BaseController {
 
         return AjaxResult.success(pageData);
     }
+    @ApiOperation("id查询")
+    @GetMapping("/{id}")
+    @PreAuthorize("@ss.hasPermi('system:config:list')")
+    public AjaxResult getById(@PathVariable int id){
+
+        return AjaxResult.success(protocolService.getById(id));
+
+    }
 
     @ApiOperation("启用|禁用")
-    @PostMapping("/status")
+    @GetMapping("/status")
     @PreAuthorize("@ss.hasPermi('system:config:list')")
     public AjaxResult status(int id, String status) {
-        return toAjax(protocolService.disabled(id, status));
+
+        return protocolService.disabled(id, status);
+    }
+
+    @ApiOperation("保存脚本")
+    @PostMapping("/saveScript")
+    @PreAuthorize("@ss.hasPermi('system:config:list')")
+    public AjaxResult saveScript(@RequestBody ScriptParam param) {
+
+        checkScript(param.getProtocolContent());
+
+        Protocol protocol = protocolService.getById(param.getId());
+        protocol.setProtocolContent(param.getProtocolContent());
+        return AjaxResult.success(protocolService.save(protocol));
     }
 
     @ApiOperation("执行脚本")

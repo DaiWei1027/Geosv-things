@@ -21,23 +21,23 @@ public class Rule extends BaseDomain {
     Integer id;
 
     @NotBlank(message="规则名称不能为空")
-    @ApiModelProperty(name = "规则名称",required = true)
+    @ApiModelProperty(value = "规则名称",required = true)
     String ruleName;
 
     @NotBlank(message="规则编号不能为空")
-    @ApiModelProperty(name = "规则编号",required = true)
+    @ApiModelProperty(value = "规则编号",required = true)
     String ruleNo;
 
-    @ApiModelProperty(name = "状态 启用0 停用 1",required = true)
+    @ApiModelProperty(value = "状态 启用0 停用 1",required = true)
     String status;
 
-    @ApiModelProperty(name = "描述")
+    @ApiModelProperty(value = "描述")
     String description;
 
-    @ApiModelProperty(name = "触发条件",notes = "全部：ALL 任意一个：ANY")
+    @ApiModelProperty(value = "触发条件",notes = "全部：ALL 任意一个：ANY")
     String triggering;
 
     @NotBlank(message="产品ID不能为空")
-    @ApiModelProperty(name = "产品ID",required = true)
+    @ApiModelProperty(value = "产品ID",required = true)
     Integer productId;
 }

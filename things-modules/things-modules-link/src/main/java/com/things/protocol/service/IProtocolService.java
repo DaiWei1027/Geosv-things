@@ -2,6 +2,7 @@ package com.things.protocol.service;
 
 import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.things.common.core.domain.AjaxResult;
 import com.things.protocol.domain.Protocol;
 import com.things.protocol.domain.vo.ProtocolExecuteParam;
 
@@ -17,7 +18,7 @@ public interface IProtocolService extends IService<Protocol> {
 
     int update(Protocol protocol);
 
-    int disabled(Integer id, String status);
+    AjaxResult disabled(Integer id, String status);
 
     List<JSONObject> execute(ProtocolExecuteParam param);
 

@@ -99,4 +99,20 @@ public class CommonPoolTaskExecutor {
         executor.initialize();
         return executor;
     }
+
+    @Bean("logExecutor")
+    public ThreadPoolTaskExecutor logExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(CORE_POOL_SIZE);
+        executor.setMaxPoolSize(MAX_POOL_SIZE);
+        executor.setQueueCapacity(QUEUE_CAPACITY);
+        executor.setThreadNamePrefix("rule_executor-");
+        /*
+         *  使用此策略，如果添加到线程池失败，那么主线程会自己去执行该任务，不会等待线程池中的线程去执行
+         */
+        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        executor.setKeepAliveSeconds(KEEP_ALIVE);
+        executor.initialize();
+        return executor;
+    }
 }

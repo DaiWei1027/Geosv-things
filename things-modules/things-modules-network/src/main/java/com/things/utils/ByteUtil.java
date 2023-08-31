@@ -1,6 +1,10 @@
 package com.things.utils;
 
+import com.things.common.dynamicCompilation.bytecode.ByteUtils;
+import org.apache.commons.lang3.ArrayUtils;
+
 import java.text.DecimalFormat;
+import java.util.Arrays;
 
 /**
  * @author DaiWei
@@ -65,11 +69,34 @@ public class ByteUtil {
     }
 
     public static void main(String[] args) {
-        Double doubleByHexstr = getDoubleByHexstr("45def000");
-        float v = Float.intBitsToFloat(Integer.parseInt("45def000", 16));
-        System.out.println(v);
-        System.out.println(hexStringToString("4D455353414745203100000000000000"));
+
+//        System.out.println(hexStringToString("31 2e 34 36 20 32 30 32 33 2d 30 36 2d 31 36 20 30 38 3a 34 39 3a 34 33  ".replace(" ","")));
+//        System.out.println(hexStringToString("33 2e 34 31 20 32 30 32 33 2d 30 36 2d 31 36 20 30 38 3a 34 39 3a 34 33 ".replace(" ","")));
+//        System.out.println(hexStringToString("33 2e 31 32 20 32 30 32 33 2d 30 36 2d 31 36 20 30 38 3a 34 39 3a 34 33 ".replace(" ","")));
+//        System.out.println(hexStringToString("31 2e 34 30 20 32 30 32 33 2d 30 36 2d 31 36 20 31 33 3a 32 34 3a 30 38 31 2e 34 36 20 32 30 32 33 2d 30 36 2d 31 36 20 31 33 3a 32 34 3a 30 38 33 2e 34 31 20 32 30 32 33 2d 30 36 2d 31 36 20 31 33 3a 32 34 3a 30 38 33 2e 31 32 20 32 30 32 33 2d 30 36 2d 31 36 20 31 33 3a 32 34 3a 30 38 ".replace(" ","")));
+//
+//        byte[] bytes = hexString2Bytes("1b 06 00 00 a3 31 2e 34 30 20 32 30 32 33 2d 30 36 2d 31 36 20 31 33 3a 32 34 3a 30 38 31 2e 34 36 20 32 30 32 33 2d 30 36 2d 31 36 20 31 33 3a 32 34 3a 30 38 33 2e 34 31 20 32 30 32 33 2d 30 36 2d 31 36 20 31 33 3a 32 34 3a 30 38 33 2e 31 32 20 32 30 32 33 2d 30 36 2d 31 36 20 31 33 3a 32 34 3a 30 38 1b 03".replace(" ",""));
+//
+//        eventHandle(ArrayUtils.subarray(bytes, 5, 29));
+//        eventHandle(ArrayUtils.subarray(bytes, 29, 53));
+//        eventHandle(ArrayUtils.subarray(bytes, 53, 77));
+//        eventHandle(ArrayUtils.subarray(bytes, 77, 101));
+
+        System.out.println(hexStringToString("19 00 00 00".replace(" ","")));
+        String s = hexStringToString("76 35 2e 32 2e 30 00 00 00 00 00 00 00 00 00".replace(" ", ""));
+        System.out.println(s);
     }
+
+    public static void eventHandle(byte[] payload){
+
+        String eventId = bytes2String(ArrayUtils.subarray(payload, 0, 4));
+        String date = bytes2String(ArrayUtils.subarray(payload, 5, 24));
+
+        System.out.println(eventId);
+        System.out.println(date);
+    }
+
+
 
     public static Double getDoubleByHexstr(String hexstr) {
         //String[] hexarray = hexstr.split(", ");

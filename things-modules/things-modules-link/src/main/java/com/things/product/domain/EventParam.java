@@ -18,12 +18,12 @@ public class EventParam extends BaseDomain {
     @TableId(type = IdType.AUTO)
     Integer id;
 
-    @ApiModelProperty(name = "产品id",required = true)
+    @ApiModelProperty(value = "产品id",required = true)
     Integer eventId;
 
-    @ApiModelProperty(name = "参数名称",required = true)
+    @ApiModelProperty(value = "参数名称",required = true)
     String paramName;
 
-    @ApiModelProperty(name = "参数字段",required = true)
+    @ApiModelProperty(value = "参数字段",required = true)
     String fieldName;
 }

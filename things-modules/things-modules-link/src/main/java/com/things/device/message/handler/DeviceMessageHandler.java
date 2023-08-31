@@ -1,6 +1,7 @@
 package com.things.device.message.handler;
 
 import com.alibaba.fastjson2.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.things.common.constant.DeviceConstants;
 import com.things.common.constant.RedisConstants;
 import com.things.common.constant.TopicConstants;
@@ -156,6 +157,12 @@ public class DeviceMessageHandler implements NettyMessageHandler {
         Device device = deviceService.selectByDeviceId(deviceId);
 
         mqttMessage(device.getProductId().toString(), deviceId, ByteUtil.hexString2Bytes(payload.toString()));
+    }
+
+    @Override
+    public boolean countDevice(String ipAddr) {
+        int count = deviceService.count(new LambdaQueryWrapper<Device>().eq(Device::getDeviceId, ipAddr));
+        return count > 0;
     }
 
     /**

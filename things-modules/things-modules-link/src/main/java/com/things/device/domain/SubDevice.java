@@ -24,7 +24,7 @@ public class SubDevice extends BaseDomain {
     @ApiModelProperty(value = "子设备唯一标识",required = true)
     String deviceId;
 
-    @ApiModelProperty(value = "设备唯一标识",required = true)
+    @ApiModelProperty(value = "设备唯一标识(设备在网关中的ID)",required = true)
     String deviceNo;
 
     /**
@@ -48,7 +48,7 @@ public class SubDevice extends BaseDomain {
     @ApiModelProperty(value = "启用状态",required = true)
     String status;
 
-    @ApiModelProperty("连接状态")
+    @ApiModelProperty(value = "连接状态")
     String connectionStatus;
 
 }

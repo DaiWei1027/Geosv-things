@@ -16,30 +16,30 @@ public class Protocol {
     @TableId(type = IdType.AUTO)
     Integer id;
 
-    @ApiModelProperty(name = "协议名称")
+    @ApiModelProperty(value = "协议名称")
     String protocolName;
 
-    @ApiModelProperty(name = "协议标识")
+    @ApiModelProperty(value = "协议标识")
     String protocolMark;
 
-    @ApiModelProperty(name = "协议版本")
+    @ApiModelProperty(value = "协议版本")
     String protocolVersion;
 
-    @ApiModelProperty(name = "协议类型，Modbus 等")
+    @ApiModelProperty(value = "协议类型，Modbus、TCP、MQTT 等")
     String type;
 
-    @ApiModelProperty(name = "数据类型",notes = "BYTE,JSON")
+    @ApiModelProperty(value = "数据类型",notes = "BYTE,JSON")
     String dataType;
 
     @ApiModelProperty(value = "启动状态 0启用 1禁用")
     String status;
 
-    @ApiModelProperty(name = "语言，JAVA")
+    @ApiModelProperty(value = "语言，JAVA")
     String language;
 
-    @ApiModelProperty(name = "协议内容")
+    @ApiModelProperty(value = "协议内容")
     String protocolContent;
 
-    @ApiModelProperty(name = "备注")
+    @ApiModelProperty(value = "备注")
     String remark;
 }

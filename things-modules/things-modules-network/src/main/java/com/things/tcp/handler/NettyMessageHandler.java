@@ -15,4 +15,12 @@ public interface NettyMessageHandler {
      * @param payload  数据
      */
     public void nettyMessage(String deviceId, Object payload);
+
+    /**
+     * 通过IP地址查询设备
+     *
+     * @param ipAddr IP地址
+     * @return 布尔
+     */
+    public boolean countDevice(String ipAddr);
 }

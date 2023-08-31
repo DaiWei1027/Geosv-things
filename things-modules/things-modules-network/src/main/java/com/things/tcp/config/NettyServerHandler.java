@@ -43,11 +43,12 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object payload) {
         //获取客户端请求的地址，获取到ip+端口
-        String url = ctx.channel().remoteAddress().toString();
+        String remoteAddress = ctx.channel().remoteAddress().toString();
+        String remoteIp = remoteAddress.substring(1, remoteAddress.length() - 5);
         //区分客户端请求的那个端口
         String serverPort = ctx.channel().localAddress().toString();
         String requestPort = serverPort.substring(serverPort.length() - 4);
-        log.debug("[{}]向[{}]端口写入数据:[{}]", url, requestPort, payload);
+        log.debug("[{}]向[{}]端口写入数据:[{}]", remoteAddress, requestPort, payload);
 
         if (payload.toString().startsWith(HEART_BEAT)) {
             //心跳包处理
@@ -66,8 +67,20 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
 
             }else {
 
-                ctx.disconnect();
-                log.info("无效的channel,通道未进行心跳认证");
+                //如果是没有心跳包认证的设备 则进行IP地址认证
+                NettyMessageHandler bean = SpringUtil.getBean(NettyMessageHandler.class);
+
+                if (bean.countDevice(remoteIp)){
+
+                    channelMap.put(remoteIp,ctx);
+                    bean.nettyMessage(remoteIp,payload);
+
+                }else {
+
+                    ctx.disconnect();
+                    log.info("无效的channel,通道未进行心跳认证");
+
+                }
 
             }
 

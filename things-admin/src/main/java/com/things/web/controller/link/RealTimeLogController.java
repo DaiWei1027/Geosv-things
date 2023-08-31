@@ -3,9 +3,11 @@ package com.things.web.controller.link;
 
 import com.things.common.core.controller.BaseController;
 import com.things.common.core.domain.AjaxResult;
+import com.things.device.service.IDeviceService;
 import com.things.sse.RealTimeLogServer;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +22,10 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @Api(tags = "实时日志")
 @RestController
 @RequestMapping("/real_time/log")
+@AllArgsConstructor
 public class RealTimeLogController extends BaseController {
+
+    private final IDeviceService deviceService;
 
     /**
      * 创建连接
@@ -29,8 +34,8 @@ public class RealTimeLogController extends BaseController {
      * @return SseEmitter
      */
     @ApiOperation("创建连接")
-    @GetMapping("/connect/{userId}")
-    public SseEmitter connect(@PathVariable String userId) {
+    @GetMapping("/connect")
+    public SseEmitter connect(String userId , String deviceId) {
 
         return RealTimeLogServer.connect(userId);
     }
