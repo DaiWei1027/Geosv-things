@@ -18,6 +18,8 @@ public class ProtocolParam extends Pagination {
 
     String type;
 
+    String dataType;
+
     String status;
 
     String language;

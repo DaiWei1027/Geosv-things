@@ -12,6 +12,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import retrofit2.http.Path;
 
 /**
  * @author DaiWei
@@ -70,5 +71,11 @@ public class SubDeviceController extends BaseController {
         );
 
         return AjaxResult.success(pageData);
+    }
+
+    @ApiOperation("id查询")
+    @GetMapping("/{id}")
+    public AjaxResult getById(@PathVariable Integer id){
+        return AjaxResult.success(subDeviceService.getById(id));
     }
 }

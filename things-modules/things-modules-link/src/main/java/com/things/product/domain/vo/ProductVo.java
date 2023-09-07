@@ -14,4 +14,5 @@ public class ProductVo extends Pagination {
     @ApiModelProperty(name = "产品名称")
     String productName;
 
+    String connectionType;
 }

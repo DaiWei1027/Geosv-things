@@ -18,11 +18,12 @@ public class RuleVo extends Rule {
     /**
      * 触发条件
      */
-    @ApiModelProperty(name = "触发条件数组")
+    @ApiModelProperty(value = "触发条件数组")
     List<RuleCondition> ruleConditions;
 
     /**
      * 执行动作
      */
+    @ApiModelProperty(value = "执行动作数组")
     List<ActionVo> actionVos;
 }

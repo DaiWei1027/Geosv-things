@@ -16,6 +16,7 @@ import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author DaiWei
@@ -37,6 +38,8 @@ public class ProtocolManage {
 
         List<Protocol> protocols = protocolMapper.selectList(new QueryWrapper<>());
 
+        AtomicInteger updateNumber = new AtomicInteger();
+
         protocols.forEach(protocol -> {
 
             redisCache.setCacheObject(RedisConstants.PROTOCOL + protocol.getId(), protocol);
@@ -45,14 +48,14 @@ public class ProtocolManage {
             try {
                 GroovyPlugin objClass = GroovyUtils.instanceTaskGroovyScript(protocol.getProtocolContent());
                 groovyPluginMap.put(protocol.getId(), objClass);
-
+                updateNumber.getAndIncrement();
             } catch (Exception e) {
                 log.error("协议[{}]加载动态脚本失败:{}", protocol.getProtocolName(), e.getMessage());
             }
 
         });
 
-        log.info("协议管理器：初始化协议缓存成功：[{}]", protocols.size());
+        log.info("协议管理器：初始化协议缓存成功：[{}]", updateNumber);
     }
 
     /**

@@ -15,6 +15,7 @@ import com.things.rule.service.IActionService;
 import lombok.AllArgsConstructor;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -33,6 +34,7 @@ public class ActionServiceImpl extends ServiceImpl<ActionMapper, Action> impleme
     private final MessageActionMapper messageActionMapper;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void insertAction(int id, List<ActionVo> actionVos) {
 
         actionVos.forEach(actionVo -> {

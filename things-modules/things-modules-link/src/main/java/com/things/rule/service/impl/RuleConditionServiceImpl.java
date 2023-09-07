@@ -1,5 +1,6 @@
 package com.things.rule.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.things.common.constant.RedisConstants;
 import com.things.common.core.redis.RedisCache;
@@ -35,5 +36,10 @@ public class RuleConditionServiceImpl extends ServiceImpl<RuleConditionMapper, R
 
         });
 
+    }
+
+    @Override
+    public List<RuleCondition> getByRuleId(int ruleId) {
+        return ruleConditionMapper.selectList(new LambdaQueryWrapper<RuleCondition>().eq(RuleCondition::getRuleId,ruleId));
     }
 }

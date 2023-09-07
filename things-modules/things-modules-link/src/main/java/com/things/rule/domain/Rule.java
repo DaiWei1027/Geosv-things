@@ -34,7 +34,7 @@ public class Rule extends BaseDomain {
     @ApiModelProperty(value = "描述")
     String description;
 
-    @ApiModelProperty(value = "触发条件",notes = "全部：ALL 任意一个：ANY")
+    @ApiModelProperty(value = "触发条件 全部：ALL 任意一个：ANY",notes = "全部：ALL 任意一个：ANY")
     String triggering;
 
     @NotBlank(message="产品ID不能为空")

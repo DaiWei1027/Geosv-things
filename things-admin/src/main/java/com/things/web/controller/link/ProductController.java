@@ -2,6 +2,7 @@ package com.things.web.controller.link;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.things.common.constant.DeviceConstants;
 import com.things.common.constant.RedisConstants;
 import com.things.common.core.controller.BaseController;
 import com.things.common.core.domain.AjaxResult;
@@ -9,6 +10,9 @@ import com.things.common.core.redis.RedisCache;
 import com.things.common.enums.DeviceStatus;
 import com.things.common.utils.StringUtils;
 import com.things.device.domain.Device;
+import com.things.device.domain.SubDevice;
+import com.things.device.service.IDeviceService;
+import com.things.device.service.ISubDeviceService;
 import com.things.product.domain.Product;
 import com.things.product.domain.vo.ProductParams;
 import com.things.product.service.IProductService;
@@ -35,7 +39,12 @@ public class ProductController extends BaseController {
     @Autowired
     private IProductService productService;
     @Autowired
+    private IDeviceService deviceService;
+    @Autowired
+    private ISubDeviceService subDeviceService;
+    @Autowired
     private RedisCache redisCache;
+
 
     @ApiOperation("新增")
     @PostMapping("/insert")
@@ -44,9 +53,9 @@ public class ProductController extends BaseController {
         product.setCreateBy(getUsername());
         product.setCreateTime(new Date());
         productService.save(product);
-        ProductParams productParams = new ProductParams();
-        productParams.setProduct(product);
-        redisCache.setCacheObject(RedisConstants.PRODUCT + product.getId(), productParams);
+//        ProductParams productParams = new ProductParams();
+//        productParams.setProduct(product);
+//        redisCache.setCacheObject(RedisConstants.PRODUCT + product.getId(), productParams);
         return AjaxResult.success();
     }
 
@@ -81,6 +90,15 @@ public class ProductController extends BaseController {
     @PostMapping("/delete/{id}")
     @PreAuthorize("@ss.hasPermi('system:config:list')")
     public AjaxResult delete(@PathVariable Integer id) {
+        int deviceNum = deviceService.count(new LambdaQueryWrapper<Device>().eq(Device::getProductId, id));
+        int subDeviceNum = subDeviceService.count(new LambdaQueryWrapper<SubDevice>().eq(SubDevice::getProductId, id));
+
+        if (deviceNum > 0 || subDeviceNum > 0){
+
+            return AjaxResult.error("产品下存在设备或子设备，无法删除");
+
+        }
+
         redisCache.deleteObject(RedisConstants.PRODUCT + id);
         return toAjax(productService.removeById(id));
     }
@@ -94,9 +112,18 @@ public class ProductController extends BaseController {
 
         Page<Product> pageData = productService.page(page, new LambdaQueryWrapper<Product>()
                 .like(StringUtils.isNotEmpty(param.getProductName()), Product::getProductName, param.getProductName())
+                .eq(StringUtils.isNotEmpty(param.getConnectionType()), Product::getConnectType, param.getConnectionType())
         );
 
         return AjaxResult.success(pageData);
+    }
+
+    @ApiOperation("id查询")
+    @GetMapping("/{id}")
+    @PreAuthorize("@ss.hasPermi('system:config:list')")
+    public AjaxResult getById(@PathVariable Integer id){
+        Product prod = productService.getById(id);
+        return AjaxResult.success(prod);
     }
 
     @ApiOperation("查询全部")

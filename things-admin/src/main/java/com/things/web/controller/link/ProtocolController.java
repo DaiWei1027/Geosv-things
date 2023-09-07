@@ -5,19 +5,23 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.things.common.constant.DeviceConstants;
 import com.things.common.core.controller.BaseController;
 import com.things.common.core.domain.AjaxResult;
-import com.things.common.groovy.GroovyPlugin;
 import com.things.common.groovy.GroovyUtils;
 import com.things.common.utils.StringUtils;
 import com.things.protocol.domain.Protocol;
 import com.things.protocol.domain.vo.ProtocolExecuteParam;
 import com.things.protocol.domain.vo.ProtocolParam;
+import com.things.protocol.domain.vo.ProtocolVo;
 import com.things.protocol.domain.vo.ScriptParam;
 import com.things.protocol.service.IProtocolService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.compress.utils.Lists;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 协议管理
@@ -63,10 +67,28 @@ public class ProtocolController extends BaseController {
                 .eq(StringUtils.isNotEmpty(param.getStatus()), Protocol::getStatus, param.getStatus())
                 .eq(StringUtils.isNotEmpty(param.getLanguage()), Protocol::getLanguage, param.getLanguage())
                 .eq(StringUtils.isNotEmpty(param.getType()), Protocol::getType, param.getType())
+                .eq(StringUtils.isNotEmpty(param.getDataType()), Protocol::getDataType, param.getDataType())
         );
 
         return AjaxResult.success(pageData);
     }
+
+    @ApiOperation("查询全部启用")
+    @PostMapping("/all")
+    @PreAuthorize("@ss.hasPermi('system:config:list')")
+    public AjaxResult list(){
+
+        List<Protocol> list = protocolService.list(new LambdaQueryWrapper<Protocol>().eq(Protocol::getStatus, DeviceConstants.ENABLE));
+        List<ProtocolVo> vos = Lists.newArrayList();
+        for (Protocol protocol : list) {
+            ProtocolVo protocolVo = new ProtocolVo();
+            BeanUtils.copyProperties(protocol,protocolVo);
+            vos.add(protocolVo);
+        }
+
+        return AjaxResult.success(vos);
+    }
+
     @ApiOperation("id查询")
     @GetMapping("/{id}")
     @PreAuthorize("@ss.hasPermi('system:config:list')")

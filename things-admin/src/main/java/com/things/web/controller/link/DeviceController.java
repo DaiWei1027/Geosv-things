@@ -87,6 +87,16 @@ public class DeviceController extends BaseController {
         return AjaxResult.success(pageData);
     }
 
+    @ApiOperation("id查询")
+    @GetMapping("/{id}")
+    @PreAuthorize("@ss.hasPermi('system:dept:list')")
+    public AjaxResult getById(@PathVariable Integer id){
+
+        return AjaxResult.success(deviceService.getById(id));
+
+    }
+
+
     @ApiOperation("在线离线统计")
     @PostMapping("/onlineCount")
     @PreAuthorize("@ss.hasPermi('system:dept:list')")

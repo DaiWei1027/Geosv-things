@@ -6,6 +6,7 @@ import com.things.common.core.controller.BaseController;
 import com.things.common.core.domain.AjaxResult;
 import com.things.common.utils.StringUtils;
 import com.things.common.utils.bean.BeanUtils;
+import com.things.device.domain.Device;
 import com.things.rule.domain.Rule;
 import com.things.rule.domain.RuleCondition;
 import com.things.rule.domain.vo.RuleParam;
@@ -52,24 +53,6 @@ public class RuleController extends BaseController {
         return AjaxResult.success(pageData);
     }
 
-    @ApiOperation("主键查询")
-    @PostMapping("/getById/{id}")
-    @PreAuthorize("@ss.hasPermi('system:config:list')")
-    public AjaxResult getById(@PathVariable Integer id) {
-
-        Rule rule = ruleService.getById(id);
-
-        RuleVo ruleVo = new RuleVo();
-
-        BeanUtils.copyProperties(rule,ruleVo);
-
-        List<RuleCondition> ruleConditions = ruleConditionService.list(new LambdaQueryWrapper<RuleCondition>().eq(RuleCondition::getRuleId, id));
-
-        ruleVo.setRuleConditions(ruleConditions);
-
-        return AjaxResult.success(ruleVo);
-    }
-
     @ApiOperation("新增")
     @PostMapping("/insert")
     @PreAuthorize("@ss.hasPermi('system:config:list')")
@@ -84,5 +67,22 @@ public class RuleController extends BaseController {
     public AjaxResult update(@RequestBody RuleVo ruleVo) {
         ruleVo.setUpdateBy(getUsername());
         return ruleService.updateRule(ruleVo);
+    }
+
+    @ApiOperation("启用|停用")
+    @GetMapping("/status")
+    @PreAuthorize("@ss.hasPermi('system:dept:list')")
+    public AjaxResult status(Integer id, String status) {
+
+        return ruleService.status(id,status);
+    }
+
+    @ApiOperation("id查询")
+    @GetMapping("/{id}")
+    @PreAuthorize("@ss.hasPermi('system:dept:list')")
+    public AjaxResult getById(@PathVariable Integer id){
+
+        return AjaxResult.success(ruleService.selectById(id));
+
     }
 }

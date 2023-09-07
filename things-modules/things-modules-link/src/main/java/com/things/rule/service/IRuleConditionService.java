@@ -19,4 +19,11 @@ public interface IRuleConditionService extends IService<RuleCondition> {
      * @param conditionList 触发条件
      */
     void insertRuleConditions(int ruleId, List<RuleCondition> conditionList);
+
+    /**
+     * 规则Id查询
+     * @param ruleId 规则id
+     * @return 规则参数
+     */
+    List<RuleCondition> getByRuleId(int ruleId);
 }

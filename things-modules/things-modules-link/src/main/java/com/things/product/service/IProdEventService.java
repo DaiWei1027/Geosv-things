@@ -4,8 +4,10 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.things.common.core.domain.AjaxResult;
 import com.things.product.domain.ProdEvent;
 import com.things.product.domain.Product;
+import com.things.product.domain.vo.ProdEventParams;
 
 import javax.annotation.PostConstruct;
+import java.util.List;
 
 /**
  * @author DaiWei
@@ -36,4 +38,11 @@ public interface IProdEventService extends IService<ProdEvent> {
      * @return AjaxResult
      */
     AjaxResult delete(Integer id);
+
+    /**
+     * 查询事件参数tree
+     * @param productId 产品id
+     * @return
+     */
+    List<ProdEventParams> eventTree(Integer productId);
 }

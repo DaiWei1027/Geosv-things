@@ -2,8 +2,10 @@ package com.things.rule.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.things.common.constant.DeviceConstants;
 import com.things.common.constant.RedisConstants;
 import com.things.common.core.domain.AjaxResult;
+import com.things.common.core.domain.R;
 import com.things.common.core.redis.RedisCache;
 import com.things.common.utils.bean.BeanUtils;
 import com.things.rule.domain.Rule;
@@ -19,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.PostConstruct;
 import java.util.Arrays;
@@ -123,7 +126,7 @@ public class RuleServiceImpl extends ServiceImpl<RuleMapper, Rule> implements IR
         //查询规则缓存
         List<RuleVo> cacheList = redisCache.getCacheList(RedisConstants.RULE + ruleVo.getProductId());
         //筛选之前的缓存
-        List<RuleVo> collect = cacheList.stream().filter(item -> item.getId() == rule.getId()).collect(Collectors.toList());
+        List<RuleVo> collect = cacheList.stream().filter(item -> item.getId().equals(rule.getId())).collect(Collectors.toList());
 
         cacheList.removeAll(collect);
 
@@ -132,5 +135,63 @@ public class RuleServiceImpl extends ServiceImpl<RuleMapper, Rule> implements IR
         redisCache.setCacheList(RedisConstants.RULE + ruleVo.getProductId(),cacheList);
 
         return AjaxResult.success();
+    }
+
+    @Override
+    public AjaxResult status(Integer id, String status) {
+
+        Rule rule = this.getById(id);
+        rule.setStatus(status);
+        ruleMapper.updateById(rule);
+
+        //更新缓存
+        if (DeviceConstants.ENABLE.equals(status)){
+
+            List<RuleCondition> ruleConditions = ruleConditionService.getByRuleId(id);
+            List<ActionVo> actionVos = actionService.listByRuleId(id);
+
+            RuleVo ruleVo = new RuleVo();
+            BeanUtils.copyProperties(rule,ruleVo);
+            ruleVo.setRuleConditions(ruleConditions);
+            ruleVo.setActionVos(actionVos);
+
+            redisCache.rightPush(RedisConstants.RULE + ruleVo.getProductId(), ruleVo);
+        }else {
+
+            //查询规则缓存
+            List<RuleVo> cacheList = redisCache.getCacheList(RedisConstants.RULE + rule.getProductId());
+
+            //筛选之前的缓存
+            List<RuleVo> collect = cacheList.stream().filter(item -> item.getId().equals(rule.getId())).collect(Collectors.toList());
+
+            cacheList.removeAll(collect);
+
+            redisCache.deleteObject(RedisConstants.RULE + rule.getProductId());
+
+            if (!CollectionUtils.isEmpty(cacheList)){
+
+                redisCache.setCacheList(RedisConstants.RULE + rule.getProductId(),cacheList);
+
+            }
+        }
+
+        return AjaxResult.success();
+    }
+
+    @Override
+    public RuleVo selectById(Integer id) {
+
+        Rule rule = this.getById(id);
+
+        List<RuleCondition> ruleConditions = ruleConditionService.getByRuleId(id);
+
+        List<ActionVo> actionVos = actionService.listByRuleId(id);
+
+        RuleVo ruleVo = new RuleVo();
+        BeanUtils.copyProperties(rule,ruleVo);
+        ruleVo.setRuleConditions(ruleConditions);
+        ruleVo.setActionVos(actionVos);
+
+        return ruleVo;
     }
 }

@@ -73,6 +73,28 @@ public class ProdEventServiceImpl extends ServiceImpl<ProdEventMapper, ProdEvent
         return AjaxResult.success();
     }
 
+    @Override
+    public List<ProdEventParams> eventTree(Integer productId) {
+
+        List<ProdEvent> prodEvents = prodEventMapper.selectList(new LambdaQueryWrapper<ProdEvent>().eq(ProdEvent::getProductId, productId));
+
+        List<ProdEventParams> prodEventParamsList = Lists.newArrayList();
+        for (ProdEvent prodEvent : prodEvents) {
+
+            ProdEventParams prodEventParams = new ProdEventParams();
+
+            List<EventParam> eventParamList = eventParamMapper.selectList(new LambdaQueryWrapper<EventParam>().eq(EventParam::getEventId, prodEvent.getId()));
+
+            prodEventParams.setProdEvent(prodEvent);
+
+            prodEventParams.setEventParamList(eventParamList);
+
+            prodEventParamsList.add(prodEventParams);
+        }
+
+        return prodEventParamsList;
+    }
+
     public int countByEventName(String eventName){
         return prodEventMapper.selectCount(new LambdaQueryWrapper<ProdEvent>().eq(ProdEvent::getEventName, eventName));
     }

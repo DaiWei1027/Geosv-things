@@ -21,8 +21,26 @@ public interface IRuleService extends IService<Rule> {
 
     /**
      * 编辑
+     *
      * @param ruleVo 规则参数
      * @return AjaxResult
      */
     AjaxResult updateRule(RuleVo ruleVo);
+
+    /**
+     * 启用|停用
+     *
+     * @param id     主键
+     * @param status 状态
+     * @return
+     */
+    AjaxResult status(Integer id, String status);
+
+    /**
+     * id查询
+     *
+     * @param id 主键
+     * @return
+     */
+    RuleVo selectById(Integer id);
 }

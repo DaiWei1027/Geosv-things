@@ -35,7 +35,7 @@ public class RealTimeLogController extends BaseController {
      */
     @ApiOperation("创建连接")
     @GetMapping("/connect")
-    public SseEmitter connect(String userId , String deviceId) {
+    public SseEmitter connect(String userId) {
 
         return RealTimeLogServer.connect(userId);
     }

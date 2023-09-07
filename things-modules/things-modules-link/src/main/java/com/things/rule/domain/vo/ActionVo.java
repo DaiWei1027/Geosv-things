@@ -3,6 +3,7 @@ package com.things.rule.domain.vo;
 import com.things.rule.domain.Action;
 import com.things.rule.domain.action.AlarmAction;
 import com.things.rule.domain.action.MessageAction;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
@@ -14,7 +15,9 @@ import lombok.Data;
 @Data
 public class ActionVo extends Action {
 
+    @ApiModelProperty("告警")
     AlarmAction alarmAction;
 
+    @ApiModelProperty("消息")
     MessageAction messageAction;
 }

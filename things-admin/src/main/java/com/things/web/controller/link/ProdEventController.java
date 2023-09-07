@@ -15,6 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author DaiWei
@@ -59,5 +60,13 @@ public class ProdEventController extends BaseController {
     @PreAuthorize("@ss.hasPermi('system:config:list')")
     public AjaxResult selectByProductId(@PathVariable Integer productId) {
         return AjaxResult.success(prodEventService.list(new LambdaQueryWrapper<ProdEvent>().eq(ProdEvent::getProductId,productId)));
+    }
+
+    @ApiOperation("查询产品的所有事件及参数")
+    @PostMapping("/eventTree/{productId}")
+    @PreAuthorize("@ss.hasPermi('system:config:list')")
+    public AjaxResult eventTree(@PathVariable Integer productId) {
+
+        return AjaxResult.success(prodEventService.eventTree(productId));
     }
 }

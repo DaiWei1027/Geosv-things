@@ -67,73 +67,65 @@ public class RuleHandler {
         if (!Objects.isNull(eventObject)) {
 
             String event = eventObject.toString();
-            //从缓存中取产品事件以及事件参数
-            List<ProdEventParams> prodEventParamsList = redisCache.getCacheList(RedisConstants.PROD_EVENT + productId);
-            //筛选当前事件的产品事件
-            ProdEventParams prodEventParams = prodEventParamsList.stream().filter(item -> event.equals(item.getProdEvent().getEventIdentify())).findAny().get();
 
-            //推送实时日志
-            realTimeLogHandler.sendLog(prodEventParams.getProdEvent(), deviceData);
+            //查询规则
+            List<RuleVo> ruleVos = redisCache.getCacheList(RedisConstants.RULE + productId);
 
-            List<EventParam> eventParamList = prodEventParams.getEventParamList();
+            ruleVos.forEach(ruleVo -> {
 
-            if (!CollectionUtils.isEmpty(eventParamList)) {
+                List<Boolean> flags = Lists.newArrayList();
 
-                //查询规则
-                List<RuleVo> ruleVos = redisCache.getCacheList(RedisConstants.RULE + productId);
+                List<RuleCondition> ruleConditions = ruleVo.getRuleConditions();
 
-                ruleVos.forEach(ruleVo -> {
+                for (RuleCondition ruleCondition : ruleConditions) {
 
-                    List<Boolean> flags = Lists.newArrayList();
+                    if (event.equals(ruleCondition.getEventIdentify())) {
 
-                    if (null != ruleVo) {
+                        //通过规则设置的字段取设备数据中的值
+                        Object value = data.get(ruleCondition.getParam());
 
-                        List<RuleCondition> ruleConditions = ruleVo.getRuleConditions();
+                        if (null != value) {
 
-                        for (RuleCondition ruleCondition : ruleConditions) {
-                            //通过规则设置的字段取设备数据中的值
-                            Object value = data.get(ruleCondition.getParam());
-
-                            if (null != value) {
-
-                                flags.add(rule(ruleCondition, value));
-
-                            }
+                            flags.add(rule(ruleCondition, value));
 
                         }
 
-                        //是否满足条件、执行动作
-                        boolean actionFlag = false;
-
-                        if (!Objects.isNull(ruleVo.getTriggering())) {
-
-                            switch (ruleVo.getTriggering()) {
-
-                                case RuleEnum.ALL:
-                                    actionFlag = flags.stream().allMatch(s -> s.equals(true));
-                                    break;
-                                case RuleEnum.ANY:
-                                    actionFlag = flags.stream().anyMatch(s -> s.equals(true));
-                                    break;
-                                default:
-                                    break;
-                            }
-
-                        }
-
-                        if (actionFlag) {
-
-                            List<ActionVo> actionVos = ruleVo.getActionVos();
-
-                            if (!CollectionUtils.isEmpty(actionVos)) {
-                                actionHandler.action(actionVos, deviceData);
-                            }
-                        }
                     }
-                });
-            }
+
+                }
+
+                //是否满足条件、执行动作
+                boolean actionFlag = false;
+
+                if (!Objects.isNull(ruleVo.getTriggering())) {
+
+                    switch (ruleVo.getTriggering()) {
+
+                        case RuleEnum.ALL:
+                            actionFlag = flags.stream().allMatch(s -> s.equals(true));
+                            break;
+                        case RuleEnum.ANY:
+                            actionFlag = flags.stream().anyMatch(s -> s.equals(true));
+                            break;
+                        default:
+                            break;
+                    }
+
+                }
+
+                if (actionFlag) {
+
+                    List<ActionVo> actionVos = ruleVo.getActionVos();
+
+                    if (!CollectionUtils.isEmpty(actionVos)) {
+                        actionHandler.action(actionVos, deviceData);
+                    }
+                }
+
+            });
         }
     }
+
 
     public boolean rule(RuleCondition ruleCondition, Object value) {
 
@@ -153,7 +145,7 @@ public class RuleHandler {
             //如果参数为存数字则用大于小于换算
             BigDecimal threshold = BigDecimal.valueOf(Double.parseDouble(thresholdValue));
 
-            BigDecimal target = BigDecimal.valueOf(Double.parseDouble(thresholdValue));
+            BigDecimal target = BigDecimal.valueOf(Double.parseDouble(value.toString()));
 
             int compareTo = target.compareTo(threshold);
 
